@@ -215,9 +215,6 @@ export default function FormBuilder() {
 
           <TabsContent value="editor">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
-              <div className="md:col-span-1">
-                <FormSidebar onAddElement={addElement} />
-              </div>
               <div className="md:col-span-3">
                 <FormCanvas
                   formRows={formRows}
@@ -237,6 +234,18 @@ export default function FormBuilder() {
                     setConfirmationData={setConfirmationData}
                   />
                 </div>
+              </div>
+              <div className="md:col-span-1">
+                <FormSidebar
+                  onAddElement={addElement}
+                  selectedElement={
+                    formRows
+                      .flatMap((row) => row.elements)
+                      .find((element) => element.id === selectedElementId) ||
+                    null
+                  }
+                  onUpdateElement={updateElement}
+                />
               </div>
             </div>
           </TabsContent>
