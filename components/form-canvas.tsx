@@ -170,8 +170,12 @@ export default function FormCanvas({
                   3
                 </Button>
               </div>
-              <Button size="sm" onClick={() => addEmptyColumnsRow(columnCount)}>
-                <Plus size={14} className="mr-1" /> Add Row
+              <Button
+                className="text-white"
+                size="sm"
+                onClick={() => addEmptyColumnsRow(columnCount)}
+              >
+                <Plus size={14} className="mr-1 text-white" /> Add Row
               </Button>
             </div>
           </CardHeader>

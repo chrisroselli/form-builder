@@ -199,7 +199,7 @@ export default function FormBuilder() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="bg-white rounded-lg shadow-md">
+      <div className="bg-white rounded-lg shadow-md px-4">
         <Tabs defaultValue="editor">
           <TabsList className="w-full border-b">
             <TabsTrigger value="editor" className="flex-1">
@@ -214,7 +214,7 @@ export default function FormBuilder() {
           </TabsList>
 
           <TabsContent value="editor">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
               <div className="md:col-span-3">
                 <FormCanvas
                   formRows={formRows}
