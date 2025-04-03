@@ -103,6 +103,16 @@ export default function FormElementEditor({
           onChange={(e) =>
             onUpdateElement(element.id, { label: e.target.value })
           }
+          onFocus={(e) => {
+            if (e.target.value === `New ${element.type}`) {
+              onUpdateElement(element.id, { label: '' });
+            }
+          }}
+          onBlur={(e) => {
+            if (!e.target.value.trim()) {
+              onUpdateElement(element.id, { label: `New ${element.type}` });
+            }
+          }}
         />
       </div>
 
@@ -117,6 +127,18 @@ export default function FormElementEditor({
             onChange={(e) =>
               onUpdateElement(element.id, { placeholder: e.target.value })
             }
+            onFocus={(e) => {
+              if (e.target.value === `Enter ${element.type}`) {
+                onUpdateElement(element.id, { placeholder: '' });
+              }
+            }}
+            onBlur={(e) => {
+              if (!e.target.value.trim()) {
+                onUpdateElement(element.id, {
+                  placeholder: `Enter ${element.type}`,
+                });
+              }
+            }}
           />
         </div>
       )}

@@ -183,7 +183,9 @@ export default function FormCanvas({
             <DragDropContext onDragEnd={handleDragEnd}>
               {formRows.length === 0 ? (
                 <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-md">
-                  <p className="text-gray-500">Your form is empty</p>
+                  <p className="text-gray-500 text-sm">
+                    Your form is empty - Start by adding a row
+                  </p>
                 </div>
               ) : (
                 <Droppable droppableId="form-rows" type="row">

@@ -48,7 +48,7 @@ export default function FormSidebar({
       </CardHeader>
       <CardContent className="space-y-2">
         <p className="text-sm text-gray-500 mb-4">
-          Drag elements or click to add them to your form
+          Drag elements to add them to your form
         </p>
         <div className="grid grid-cols-1 gap-2 pb-4">
           {formElements.map((element) => (
@@ -102,7 +102,6 @@ function DraggableElement({ element, onAddElement }: DraggableElementProps) {
       className={`flex items-center p-2 border rounded-md cursor-grab bg-white hover:bg-gray-50 ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
-      onClick={() => onAddElement(element.type)}
     >
       <div className="mr-2 text-gray-600">{element.icon}</div>
       <span>{element.label}</span>
