@@ -199,7 +199,7 @@ export default function FormBuilder() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-white rounded-lg shadow-md">
         <Tabs defaultValue="editor">
           <TabsList className="w-full border-b">
             <TabsTrigger value="editor" className="flex-1">
@@ -228,7 +228,7 @@ export default function FormBuilder() {
                   onMoveElement={moveElement}
                   setFormRows={setFormRows}
                 />
-                <div className="mt-8">
+                <div className="mt-4">
                   <ConfirmationSettings
                     confirmationData={confirmationData}
                     setConfirmationData={setConfirmationData}

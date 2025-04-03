@@ -42,7 +42,7 @@ export default function FormSidebar({
   ];
 
   return (
-    <Card>
+    <Card className="sticky top-0 top-4">
       <CardHeader>
         <CardTitle>Form Elements</CardTitle>
       </CardHeader>
@@ -98,7 +98,7 @@ function DraggableElement({ element, onAddElement }: DraggableElementProps) {
 
   return (
     <div
-      ref={drag}
+      ref={drag as any}
       className={`flex items-center p-2 border rounded-md cursor-grab bg-white hover:bg-gray-50 ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}

@@ -72,7 +72,7 @@ export default function ConfirmationSettings({
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="mt-4">
         <CardHeader>
           <CardTitle>reCAPTCHA Settings</CardTitle>
         </CardHeader>
