@@ -269,7 +269,7 @@ if(!empty($_POST)) {
           $logger = new formLoggerApi();
           $logger->setSiteId($siteData['site.id']);
           $logger->setSessionId($siteDefineData['cms_tracking_sessions']['session.id']);
-          $logger->setFormId('f_l_');
+          $logger->setFormId('form_logger_');
           $logger->setFormName('${confirmationData.formName}');
           $logger->setcustomEmailSubject('${confirmationData.customEmailSubject}');
           $logger->setNotificationEmailAddresses('${confirmationData.notificationEmailAddresses}');

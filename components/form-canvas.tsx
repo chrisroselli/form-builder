@@ -123,7 +123,7 @@ export default function FormCanvas({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="md:col-span-2">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-start justify-between">
             <CardTitle>Form Canvas</CardTitle>
             <div className="flex items-center gap-2">
               <div className="flex border rounded-md overflow-hidden">
@@ -239,6 +239,18 @@ export default function FormCanvas({
                 </Droppable>
               )}
             </DragDropContext>
+            {formRows.length > 0 && (
+              <div className="mt-6 flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => setFormRows([])}
+                >
+                  Reset Form
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
