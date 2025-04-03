@@ -52,7 +52,8 @@ export default function FormExport({
           rows,
           columns,
         } = element;
-        const inputId = `form-element-${id}`;
+        const inputId = label.toLowerCase().replace(/ /g, '-');
+        const inputName = `form_logger_${label.replace(/ /g, '_')}`;
         const columnClass = columns ? `form-col-${columns}` : 'form-col-1';
 
         html += `
@@ -73,19 +74,19 @@ export default function FormExport({
           case 'number':
           case 'date':
             html += `
-          <input type="${type}" id="${inputId}" name="${inputId}" ${
+          <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             } ${required ? 'required' : ''}>`;
             break;
           case 'textarea':
             html += `
-          <textarea id="${inputId}" name="${inputId}" ${
+          <textarea id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             } rows="${rows || 3}" ${required ? 'required' : ''}></textarea>`;
             break;
           case 'select':
             html += `
-          <select id="${inputId}" name="${inputId}" ${
+          <select id="${inputId}" name="${inputName}" ${
               required ? 'required' : ''
             }>
             <option value="" disabled selected>${
@@ -101,7 +102,7 @@ export default function FormExport({
           case 'checkbox':
             html += `
           <div class="checkbox-wrapper">
-            <input type="checkbox" id="${inputId}" name="${inputId}" ${
+            <input type="checkbox" id="${inputId}" name="${inputName}" ${
               required ? 'required' : ''
             }>
             <label for="${inputId}">${label}</label>
@@ -124,7 +125,7 @@ export default function FormExport({
             break;
           case 'file':
             html += `
-          <input type="file" id="${inputId}" name="${inputId}" ${
+          <input type="file" id="${inputId}" name="${inputName}" ${
               required ? 'required' : ''
             }>`;
             break;
