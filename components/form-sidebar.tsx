@@ -42,7 +42,7 @@ export default function FormSidebar({
   ];
 
   return (
-    <Card className="sticky top-0 top-4">
+    <Card className="sticky top-4">
       <CardHeader>
         <CardTitle>Form Elements</CardTitle>
       </CardHeader>
