@@ -32,7 +32,8 @@ export default function FormExport({
     )
       return '';
 
-    let html = `<div class="form-container">
+    let html = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>  
+  <div class="form-container">
   <form action="/custom-confirmation.html" method="POST">`;
 
     filteredRows.forEach((row) => {
@@ -152,7 +153,8 @@ export default function FormExport({
   };
 
   const generateCss = () => {
-    return `.form-container {
+    return `<style>
+  .form-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
@@ -242,7 +244,8 @@ textarea {
 
 .submit-button:hover {
   background-color: #4338ca;
-}`;
+}
+</style>`;
   };
 
   const generateConfirmationCode = () => {
@@ -256,14 +259,14 @@ if(!empty($_POST)) {
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, [
 		'secret' => '${confirmationData.recaptchaSecretKey}',
-		'response' => $_POST['recaptcha_response'],
+		'response' => $_POST['g-recaptcha-response'],
 		'remoteip' => $_SERVER['REMOTE_ADDR']
 	]);
 
 	$resp = json_decode(curl_exec($ch));
 	curl_close($ch);
 
-	if ($resp->success && $resp->score > 0.5) {
+	if ($resp->success) {
           global $siteData, $siteDefineData;
           require_once ENV_ROOT.'/portal/libraries/formLogger.api.php';
           $logger = new formLoggerApi();
@@ -275,7 +278,7 @@ if(!empty($_POST)) {
           $logger->setNotificationEmailAddresses('${confirmationData.notificationEmailAddresses}');
 
 		// Save the form and send notifications
-		if ($logger->saveData($_POST)) {
+	if ($logger->saveData($_POST)) {
 			$output .= '<style>form{display:none;}</style>
 			<h1>Thank you!</h1>
 			<h3>We have received your information and will get back to you shortly.</h3>';
@@ -283,9 +286,11 @@ if(!empty($_POST)) {
 			$output .= '<p>Please try your submission again or contact us for assistance.</p>';
 		}
 	} else {
-		$output .= '<p>There was a problem verifying your submission.</p>';
+         // reCAPTCHA Verification failed
+		$output .= '<p>There was a problem verifying your submission with reCAPTCHA.</p>';
 	}
 } else {
+    // Missing POST data
 	$output .= '<h1>Looks like you forgot something!</h1><p>Please fill out the registration form completely.</p>';
 }
 echo $output;

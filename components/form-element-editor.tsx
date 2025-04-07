@@ -182,7 +182,7 @@ export default function FormElementEditor({
                 <PlusCircle size={16} />
               </Button>
             </div>
-            <Button onClick={handleAddUSStates} className="w-full">
+            <Button onClick={handleAddUSStates} className="bg-secondary">
               Add All US States
             </Button>
           </div>
