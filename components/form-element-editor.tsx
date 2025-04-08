@@ -1,6 +1,6 @@
 'use client';
 
-import type { FormElement } from '@/lib/types';
+import type { FormElement, FormElementType } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -8,6 +8,13 @@ import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
 import { PlusCircle, X } from 'lucide-react';
 import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 interface FormElementEditorProps {
   element: FormElement;
@@ -93,6 +100,34 @@ export default function FormElementEditor({
 
   return (
     <>
+      <div className="space-y-2 mb-2">
+        <Label htmlFor="type" className="font-bold">
+          Type
+        </Label>
+        <Select
+          value={element.type}
+          onValueChange={(value: FormElementType) =>
+            onUpdateElement(element.id, { type: value })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select input type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="text">Text</SelectItem>
+            <SelectItem value="email">Email</SelectItem>
+            <SelectItem value="tel">Telephone</SelectItem>
+            <SelectItem value="number">Number</SelectItem>
+            <SelectItem value="date">Date</SelectItem>
+            <SelectItem value="textarea">Text Area</SelectItem>
+            <SelectItem value="select">Select</SelectItem>
+            <SelectItem value="checkbox">Checkbox</SelectItem>
+            <SelectItem value="radio">Radio</SelectItem>
+            <SelectItem value="file">File</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="space-y-2 mb-2">
         <Label htmlFor="label" className="font-bold">
           Label
