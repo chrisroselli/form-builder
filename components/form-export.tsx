@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Button } from './ui/button';
 import { Copy } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface FormExportProps {
   formRows: FormRow[];
@@ -162,7 +164,7 @@ export default function FormExport({
 
   const generateCss = () => {
     return `<style>
-  .form-container {
+.form-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
@@ -344,15 +346,24 @@ echo $output;
                 <Button
                   variant="outline"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-6 bg-primary text-white border-none hover:bg-primary-light"
                   onClick={() => copyToClipboard(generateHtml())}
                 >
-                  <Copy size={14} className="mr-1" />
+                  <Copy size={14} />
                   {copied ? 'Copied!' : 'Copy'}
                 </Button>
-                <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-[400px] text-sm">
-                  <code>{generateHtml()}</code>
-                </pre>
+                <SyntaxHighlighter
+                  language="html"
+                  style={oneDark}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: '0.375rem',
+                    maxHeight: '400px',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {generateHtml()}
+                </SyntaxHighlighter>
               </div>
             </TabsContent>
 
@@ -361,15 +372,24 @@ echo $output;
                 <Button
                   variant="outline"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-6 bg-primary text-white border-none hover:bg-primary-light"
                   onClick={() => copyToClipboard(generateCss())}
                 >
-                  <Copy size={14} className="mr-1" />
+                  <Copy size={14} />
                   {copied ? 'Copied!' : 'Copy'}
                 </Button>
-                <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-[400px] text-sm">
-                  <code>{generateCss()}</code>
-                </pre>
+                <SyntaxHighlighter
+                  language="html"
+                  style={oneDark}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: '0.375rem',
+                    maxHeight: '400px',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {generateCss()}
+                </SyntaxHighlighter>
               </div>
             </TabsContent>
 
@@ -378,15 +398,24 @@ echo $output;
                 <Button
                   variant="outline"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-6 bg-primary text-white border-none hover:bg-primary-light"
                   onClick={() => copyToClipboard(generateConfirmationCode())}
                 >
-                  <Copy size={14} className="mr-1" />
+                  <Copy size={14} />
                   {copied ? 'Copied!' : 'Copy'}
                 </Button>
-                <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-[400px] text-sm">
-                  <code>{generateConfirmationCode()}</code>
-                </pre>
+                <SyntaxHighlighter
+                  language="php"
+                  style={oneDark}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: '0.375rem',
+                    maxHeight: '400px',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {generateConfirmationCode()}
+                </SyntaxHighlighter>
               </div>
             </TabsContent>
           </Tabs>
