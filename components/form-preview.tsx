@@ -10,15 +10,19 @@ import {
 } from './ui/card';
 import FormElementRenderer from './form-element-renderer';
 import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
+import { Label } from './ui/label';
 
 interface FormPreviewProps {
   formRows: FormRow[];
   submitButtonTitle?: string;
+  enableSMS?: boolean;
 }
 
 export default function FormPreview({
   formRows,
   submitButtonTitle = 'Submit Form',
+  enableSMS = false,
 }: FormPreviewProps) {
   // Filter out placeholder elements for the preview
   const filteredRows = formRows.map((row) => ({
@@ -62,6 +66,21 @@ export default function FormPreview({
                 })}
               </div>
             ))}
+            {enableSMS && (
+              <div className="flex space-x-2">
+                <Checkbox id="sms-disclaimer" required />
+                <Label htmlFor="sms-disclaimer" className="text-xs italic">
+                  By checking this box, you agree to receive text messages from
+                  Connecticut Basement Systems related to appointment setting,
+                  service informational, and marketing messages at the phone
+                  number provided above. You may reply STOP to opt-out at any
+                  time. Reply HELP for assistance. Messages and data rates may
+                  apply. Message frequency will vary. Learn more on our{' '}
+                  <a href="/privacy-policy.html">Privacy Policy</a> page and{' '}
+                  <a href="/terms-of-use.html">Terms &amp; Conditions</a>.
+                </Label>
+              </div>
+            )}
           </form>
         )}
       </CardContent>

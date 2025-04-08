@@ -14,6 +14,7 @@ interface ConfirmationSettingsProps {
     customEmailSubject: string;
     notificationEmailAddresses: string;
     submitButtonTitle: string;
+    enableSMS: boolean;
   };
   setConfirmationData: (data: any) => void;
 }
@@ -25,10 +26,11 @@ export default function ConfirmationSettings({
   const handleChange = (
     e: FormEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement;
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
     setConfirmationData((prevData: any) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -39,6 +41,19 @@ export default function ConfirmationSettings({
           <CardTitle>Form Properties</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>
+              <input
+                type="checkbox"
+                id="enableSMS"
+                name="enableSMS"
+                checked={confirmationData.enableSMS}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
             <Input

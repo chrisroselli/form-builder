@@ -18,6 +18,7 @@ export interface ConfirmationData {
   customEmailSubject: string;
   notificationEmailAddresses: string;
   submitButtonTitle: string;
+  enableSMS: boolean;
 }
 // TODO: Add SMS checkboxes
 export default function FormBuilder() {
@@ -32,6 +33,7 @@ export default function FormBuilder() {
     customEmailSubject: '',
     notificationEmailAddresses: '',
     submitButtonTitle: 'Submit',
+    enableSMS: false,
   });
 
   // Helper function to get all form elements from all rows
@@ -256,6 +258,7 @@ export default function FormBuilder() {
             <FormPreview
               formRows={formRows}
               submitButtonTitle={confirmationData.submitButtonTitle}
+              enableSMS={confirmationData.enableSMS}
             />
           </TabsContent>
 
