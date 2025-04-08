@@ -17,8 +17,9 @@ export interface ConfirmationData {
   formName: string;
   customEmailSubject: string;
   notificationEmailAddresses: string;
+  submitButtonTitle: string;
 }
-
+// TODO: Add SMS checkboxes
 export default function FormBuilder() {
   const [formRows, setFormRows] = useState<FormRow[]>([]);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
@@ -30,6 +31,7 @@ export default function FormBuilder() {
     formName: '',
     customEmailSubject: '',
     notificationEmailAddresses: '',
+    submitButtonTitle: 'Submit',
   });
 
   // Helper function to get all form elements from all rows
@@ -251,7 +253,10 @@ export default function FormBuilder() {
           </TabsContent>
 
           <TabsContent value="preview">
-            <FormPreview formRows={formRows} />
+            <FormPreview
+              formRows={formRows}
+              submitButtonTitle={confirmationData.submitButtonTitle}
+            />
           </TabsContent>
 
           <TabsContent value="export">

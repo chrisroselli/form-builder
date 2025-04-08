@@ -13,9 +13,13 @@ import { Button } from './ui/button';
 
 interface FormPreviewProps {
   formRows: FormRow[];
+  submitButtonTitle?: string;
 }
 
-export default function FormPreview({ formRows }: FormPreviewProps) {
+export default function FormPreview({
+  formRows,
+  submitButtonTitle = 'Submit Form',
+}: FormPreviewProps) {
   // Filter out placeholder elements for the preview
   const filteredRows = formRows.map((row) => ({
     ...row,
@@ -64,7 +68,7 @@ export default function FormPreview({ formRows }: FormPreviewProps) {
       {allElements.length > 0 && (
         <CardFooter>
           <Button type="submit" className="text-white inline-block mx-auto">
-            Submit Form
+            {submitButtonTitle}
           </Button>
         </CardFooter>
       )}

@@ -13,6 +13,7 @@ interface ConfirmationSettingsProps {
     formName: string;
     customEmailSubject: string;
     notificationEmailAddresses: string;
+    submitButtonTitle: string;
   };
   setConfirmationData: (data: any) => void;
 }
@@ -34,6 +35,25 @@ export default function ConfirmationSettings({
   return (
     <>
       <Card>
+        <CardHeader>
+          <CardTitle>Form Properties</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
+            <Input
+              id="submitButtonTitle"
+              name="submitButtonTitle"
+              type="text"
+              value={confirmationData.submitButtonTitle}
+              onChange={handleChange}
+              placeholder="Submit"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mt-4">
         <CardHeader>
           <CardTitle>Confirmation Page Settings</CardTitle>
         </CardHeader>

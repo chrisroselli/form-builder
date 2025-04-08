@@ -152,7 +152,7 @@ export default function FormExport({
     html += `
     <div class="form-group">
     <div class="g-recaptcha" data-sitekey="${confirmationData.recaptchaSiteKey}"></div>
-      <button type="submit" class="submit-button">Submit</button>
+      <button type="submit" class="submit-button">${confirmationData.submitButtonTitle}</button>
     </div>
   </form>
 </div>`;
