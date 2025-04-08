@@ -3,7 +3,18 @@
 import type React from 'react';
 import type { FormElementType, FormElement } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Type, AlignLeft, ListChecks, CheckSquare } from 'lucide-react';
+import {
+  Type,
+  AlignLeft,
+  ListChecks,
+  CheckSquare,
+  Mail,
+  Phone,
+  Hash,
+  Calendar,
+  Radio,
+  FileText,
+} from 'lucide-react';
 import { useDrag } from 'react-dnd';
 import FormElementEditor from './form-element-editor';
 
@@ -25,6 +36,26 @@ export default function FormSidebar({
       label: 'Text Input',
     },
     {
+      type: 'email' as FormElementType,
+      icon: <Mail size={18} />,
+      label: 'Email',
+    },
+    {
+      type: 'tel' as FormElementType,
+      icon: <Phone size={18} />,
+      label: 'Telephone',
+    },
+    {
+      type: 'number' as FormElementType,
+      icon: <Hash size={18} />,
+      label: 'Number',
+    },
+    {
+      type: 'date' as FormElementType,
+      icon: <Calendar size={18} />,
+      label: 'Date',
+    },
+    {
       type: 'textarea' as FormElementType,
       icon: <AlignLeft size={18} />,
       label: 'Text Area',
@@ -38,6 +69,16 @@ export default function FormSidebar({
       type: 'checkbox' as FormElementType,
       icon: <CheckSquare size={18} />,
       label: 'Checkbox',
+    },
+    {
+      type: 'radio' as FormElementType,
+      icon: <Radio size={18} />,
+      label: 'Radio',
+    },
+    {
+      type: 'file' as FormElementType,
+      icon: <FileText size={18} />,
+      label: 'File Upload',
     },
   ];
 

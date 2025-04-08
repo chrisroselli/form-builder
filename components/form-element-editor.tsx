@@ -202,6 +202,49 @@ export default function FormElementEditor({
         </div>
       )}
 
+      {element.type === 'radio' && (
+        <div className="space-y-2">
+          <Label className="font-bold">Radio Options</Label>
+          <div className="space-y-2">
+            {element.options?.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <Input
+                  value={option}
+                  onChange={(e) => {
+                    const options = [...(element.options || [])];
+                    options[index] = e.target.value;
+                    onUpdateElement(element.id, { options });
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveOption(index)}
+                >
+                  <X size={16} />
+                </Button>
+              </div>
+            ))}
+            <div className="flex items-center space-x-2">
+              <Input
+                placeholder="Add new radio option"
+                value={newOption}
+                onChange={(e) => setNewOption(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddOption();
+                  }
+                }}
+              />
+              <Button variant="outline" size="icon" onClick={handleAddOption}>
+                <PlusCircle size={16} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {element.type === 'textarea' && (
         <div className="space-y-2">
           <Label htmlFor="rows" className="font-bold">
