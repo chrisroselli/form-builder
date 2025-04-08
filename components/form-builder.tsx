@@ -48,8 +48,8 @@ export default function FormBuilder() {
     const newElement: FormElement = {
       id: `element-${Date.now()}`,
       type,
-      label: `New ${type}`,
-      placeholder: `Enter ${type}`,
+      label: '',
+      placeholder: '',
       required: false,
       options:
         type === 'select' || type === 'radio'

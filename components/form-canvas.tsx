@@ -316,8 +316,8 @@ function CanvasRow({
                 const newElement: FormElement = {
                   id: `element-${Date.now()}`,
                   type: item.type,
-                  label: `New ${item.type}`,
-                  placeholder: `Enter ${item.type}`,
+                  label: '',
+                  placeholder: '',
                   required: false,
                   columns: columnWidth,
                 };

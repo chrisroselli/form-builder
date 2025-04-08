@@ -63,9 +63,13 @@ export default function FormExport({
 
         if (type !== 'checkbox') {
           html += `
-          <label for="${inputId}">${label}${
-            required ? '<span class="required">*</span>' : ''
-          }</label>`;
+          ${
+            label
+              ? `<label for="${inputId}">${label}${
+                  required ? '<span class="required">*</span>' : ''
+                }</label>`
+              : ''
+          }`;
         }
 
         switch (type) {
@@ -106,7 +110,7 @@ export default function FormExport({
             <input type="checkbox" id="${inputId}" name="${inputName}" ${
               required ? 'required' : ''
             }>
-            <label for="${inputId}">${label}</label>
+            ${label ? `<label for="${inputId}">${label}</label>` : ''}
           </div>`;
             break;
           case 'radio':
@@ -118,7 +122,11 @@ export default function FormExport({
               <input type="radio" id="${inputId}-${index}" name="${inputId}" value="${option}" ${
                 required ? 'required' : ''
               }>
-              <label for="${inputId}-${index}">${option}</label>
+              ${
+                label
+                  ? `<label for="${inputId}-${index}">${option}</label>`
+                  : ''
+              }
             </div>`;
             });
             html += `
