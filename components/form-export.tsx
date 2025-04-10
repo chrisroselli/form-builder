@@ -275,7 +275,32 @@ textarea {
 .submit-button:hover {
   background-color: #4338ca;
 }
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+/* Success state styling */
+.is-valid {
+    border-color: #4CAF50 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234CAF50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+}
+/* Error state styling */
+.is-invalid {
+    border-color: #f44336 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f44336' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+}
 </style>`;
+  };
+  const generateJavaScript = () => {
+    return `<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+    `;
   };
 
   const generateConfirmationCode = () => {
@@ -351,13 +376,16 @@ echo $output;
           <Tabs defaultValue="html">
             <TabsList className="w-full mb-4">
               <TabsTrigger value="html" className="flex-1">
-                Form HTML
+                HTML
               </TabsTrigger>
               <TabsTrigger value="css" className="flex-1">
                 CSS
               </TabsTrigger>
+              <TabsTrigger value="javascript" className="flex-1">
+                JavaScript
+              </TabsTrigger>
               <TabsTrigger value="confirmation" className="flex-1">
-                Confirmation Code
+                Confirmation Page
               </TabsTrigger>
             </TabsList>
 
@@ -409,6 +437,32 @@ echo $output;
                   }}
                 >
                   {generateCss()}
+                </SyntaxHighlighter>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="javascript">
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="absolute top-2 right-6 bg-primary text-white border-none hover:bg-primary-light"
+                  onClick={() => copyToClipboard(generateJavaScript())}
+                >
+                  <Copy size={14} />
+                  {copied ? 'Copied!' : 'Copy'}
+                </Button>
+                <SyntaxHighlighter
+                  language="html"
+                  style={oneDark}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: '0.375rem',
+                    maxHeight: '400px',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {generateJavaScript()}
                 </SyntaxHighlighter>
               </div>
             </TabsContent>

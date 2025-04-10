@@ -9,7 +9,7 @@ import FormSidebar from './form-sidebar';
 import FormPreview from './form-preview';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import FormExport from './form-export';
-import ConfirmationSettings from './confirmation-settings';
+import FormSettings from './form-settings';
 
 export interface ConfirmationData {
   recaptchaSiteKey: string;
@@ -20,7 +20,7 @@ export interface ConfirmationData {
   submitButtonTitle: string;
   enableSMS: boolean;
 }
-// TODO: Add SMS checkboxes
+
 export default function FormBuilder() {
   const [formRows, setFormRows] = useState<FormRow[]>([]);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
@@ -233,7 +233,7 @@ export default function FormBuilder() {
                   setFormRows={setFormRows}
                 />
                 <div className="mt-4">
-                  <ConfirmationSettings
+                  <FormSettings
                     confirmationData={confirmationData}
                     setConfirmationData={setConfirmationData}
                   />

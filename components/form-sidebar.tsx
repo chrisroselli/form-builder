@@ -88,9 +88,6 @@ export default function FormSidebar({
         <CardTitle>Form Elements</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <p className="text-sm text-gray-500 mb-4">
-          Drag elements to add them to your form
-        </p>
         <div className="grid grid-cols-1 gap-2 pb-4">
           {formElements.map((element) => (
             <DraggableElement
@@ -110,7 +107,7 @@ export default function FormSidebar({
             />
           ) : (
             <p className="text-sm text-gray-500">
-              Select an element to edit its properties
+              Add or select an element to edit its properties
             </p>
           )}
         </div>
