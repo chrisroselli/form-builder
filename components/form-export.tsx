@@ -81,9 +81,14 @@ export default function FormExport({
               placeholder ? `placeholder="${placeholder}"` : ''
             } ${required ? 'required' : ''}>`;
             break;
-          case 'email':
-            break;
           case 'tel':
+            html += `
+          <input type="${type}" id="${inputId}" name="${inputName}" ${
+              placeholder ? `placeholder="${placeholder}"` : ''
+            } ${required ? 'required' : ''}
+            pattern="\(\d{3}\) \d{3}-\d{4}"
+            inputmode="numeric"
+            maxlength="14">`;
             break;
           case 'number':
             break;
@@ -144,6 +149,11 @@ export default function FormExport({
               required ? 'required' : ''
             }>`;
             break;
+          default:
+            html += `
+          <input type="${type}" id="${inputId}" name="${inputName}" ${
+              placeholder ? `placeholder="${placeholder}"` : ''
+            } ${required ? 'required' : ''}>`;
         }
 
         html += `
@@ -344,30 +354,38 @@ validation
             rule: 'minLength',
             value: 2,
             errorMessage: '${label} must be at least 2 characters',
-        },
-        {
-            rule: 'customRegexp',
-            value: /^[a-zA-Z\s]*$/,
-            errorMessage: '${label} cannot contain numbers',
         }
   ])
   `;
             break;
           case 'email':
+            js += `.addField('#${inputId}', [
+        {
+            rule: 'required',
+            errorMessage: '${label} is required',
+        },
+        {
+            rule: 'email',
+            errorMessage: Please enter a valid email address',
+        }
+  ])
+  `;
             break;
           case 'tel':
+            js += `.addField('#${inputId}', [
+  {
+      rule: 'required',
+      errorMessage: 'Phone number is required',
+  },
+  {
+      rule: 'customRegexp',
+      value: /^\(\d{3}\) \d{3}-\d{4}$/,
+      errorMessage: 'Please enter a valid phone number in the format (xxx) xxx-xxxx',
+  }
+])`;
             break;
-          case 'number':
-            break;
-          case 'date':
-            break;
-          case 'textarea':
-            js += ``;
-            break;
-          case 'select':
-            break;
-          case 'file':
-            break;
+          default:
+            console.log('Unknown element type:', type);
         }
       });
     });
