@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { Copy } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { z } from 'zod';
 
 interface FormExportProps {
   formRows: FormRow[];
@@ -79,26 +80,37 @@ export default function FormExport({
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>`;
+            } ${required ? 'required' : ''}>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'tel':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             } ${required ? 'required' : ''}
-            pattern="\(\d{3}\) \d{3}-\d{4}"
-            inputmode="numeric"
-            maxlength="14">`;
+            inputmode="numeric">
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'number':
+            html += `
+          <input type="${type}" id="${inputId}" name="${inputName}" ${
+              placeholder ? `placeholder="${placeholder}"` : ''
+            } ${required ? 'required' : ''}>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'date':
+            html += `
+          <input type="${type}" id="${inputId}" name="${inputName}" ${
+              placeholder ? `placeholder="${placeholder}"` : ''
+            } ${required ? 'required' : ''}>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'textarea':
             html += `
           <textarea id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } rows="${rows || 3}" ${required ? 'required' : ''}></textarea>`;
+            } rows="${rows || 3}" ${required ? 'required' : ''}></textarea>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'select':
             html += `
@@ -113,7 +125,8 @@ export default function FormExport({
             <option value="${option}">${option}</option>`;
             });
             html += `
-          </select>`;
+          </select>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'checkbox':
             html += `
@@ -122,6 +135,7 @@ export default function FormExport({
               required ? 'required' : ''
             }>
             ${label ? `<label for="${inputId}">${label}</label>` : ''}
+            <div id="${inputName}Error" class="error-message"></div>
           </div>`;
             break;
           case 'radio':
@@ -141,19 +155,22 @@ export default function FormExport({
             </div>`;
             });
             html += `
+            <div id="${inputId}Error" class="error-message"></div>
           </div>`;
             break;
           case 'file':
             html += `
           <input type="file" id="${inputId}" name="${inputName}" ${
               required ? 'required' : ''
-            }>`;
+            }>
+          <div id="${inputName}Error" class="error-message"></div>`;
             break;
           default:
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>`;
+            } ${required ? 'required' : ''}>
+          <div id="${inputName}Error" class="error-message"></div>`;
         }
 
         html += `
@@ -183,6 +200,7 @@ export default function FormExport({
                   <a href="/privacy-policy.html">Privacy Policy</a> page and
                   <a href="/terms-of-use.html">Terms &amp; Conditions</a>.
         </label>
+        <div id="sms_disclaimerError" class="error-message"></div>
       </div>`;
     }
 
@@ -250,6 +268,41 @@ select {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+input[type="text"].is-valid,
+input[type="email"].is-valid,
+input[type="tel"].is-valid,
+input[type="number"].is-valid,
+input[type="date"].is-valid,
+textarea.is-valid,
+select.is-valid {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+input[type="text"].is-invalid,
+input[type="email"].is-invalid,
+input[type="tel"].is-invalid,
+input[type="number"].is-invalid,
+input[type="date"].is-invalid,
+textarea.is-invalid,
+select.is-invalid {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 textarea {
@@ -288,26 +341,11 @@ textarea {
 .submit-button:hover {
   background-color: #4338ca;
 }
+
 .error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
-}
-/* Success state styling */
-.is-valid {
-    border-color: #4CAF50 !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234CAF50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 20px;
-}
-/* Error state styling */
-.is-invalid {
-    border-color: #f44336 !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f44336' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 20px;
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 5px;
 }
 </style>`;
   };
@@ -319,83 +357,168 @@ textarea {
     )
       return '';
 
-    let js = `<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
-<script>
-    // Phone number formatting with regex
-    document.getElementById('phone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        value = value.replace(/^(\d{0,3})(\d{0,3})(\d{0,4}).*/, '($1) $2-$3').trim();
-        e.target.value = value;
-    });
+    let js = `<script type="module">
+    import { z } from 'https://cdn.jsdelivr.net/npm/zod@3.22.4/+esm';
 
-    const validation = new window.JustValidate('#contactForm', {
-        validateBeforeSubmitting: true,
-        errorFieldCssClass: 'is-invalid',
-        successFieldCssClass: 'is-valid',
-        errorLabelCssClass: 'error-message',
-    });
-validation
-`;
+    const form = document.getElementById('custom-form');
+    const errorElements = {};`;
 
+    // Generate error element references
     filteredRows.forEach((row) => {
       if (row.elements.length === 0) return;
 
       row.elements.forEach((element) => {
-        const { type, label, placeholder } = element;
-        const inputId = label.toLowerCase().replace(/ /g, '-');
+        const { label } = element;
+        const inputName = `form_logger_${label.replace(/ /g, '_')}`;
+        js += `
+    errorElements['${inputName}'] = document.getElementById('${inputName}Error');`;
+      });
+    });
+
+    js += `
+    
+    // Define the schema
+    const formSchema = z.object({`;
+
+    // Generate schema fields
+    filteredRows.forEach((row) => {
+      if (row.elements.length === 0) return;
+
+      row.elements.forEach((element) => {
+        const { type, label, required } = element;
+        const inputName = `form_logger_${label.replace(/ /g, '_')}`;
+
         switch (type) {
           case 'text':
-            js += `.addField('#${inputId}', [
-        {
-            rule: 'required',
-            errorMessage: '${label} is required',
-        },
-        {
-            rule: 'minLength',
-            value: 2,
-            errorMessage: '${label} must be at least 2 characters',
-        }
-  ])
-  `;
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, '${label} is required')` : ''
+            }.min(2, '${label} must be at least 2 characters'),`;
             break;
           case 'email':
-            js += `.addField('#${inputId}', [
-        {
-            rule: 'required',
-            errorMessage: '${label} is required',
-        },
-        {
-            rule: 'email',
-            errorMessage: Please enter a valid email address',
-        }
-  ])
-  `;
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, 'Email is required')` : ''
+            }.email('Please enter a valid email address'),`;
             break;
           case 'tel':
-            js += `.addField('#${inputId}', [
-  {
-      rule: 'required',
-      errorMessage: 'Phone number is required',
-  },
-  {
-      rule: 'customRegexp',
-      value: /^\(\d{3}\) \d{3}-\d{4}$/,
-      errorMessage: 'Please enter a valid phone number in the format (xxx) xxx-xxxx',
-  }
-])`;
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, 'Phone number is required')` : ''
+            }.regex(/^\\(\\d{3}\\) \\d{3}-\\d{4}$/, 'Please enter a valid phone number in the format (xxx) xxx-xxxx'),`;
+            break;
+          case 'number':
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, 'Number is required')` : ''
+            }.regex(/^\\d+$/, 'Please enter a valid number'),`;
+            break;
+          case 'checkbox':
+            js += `
+      '${inputName}': z.boolean()${
+              required
+                ? `.refine(val => val === true, { message: '${label} is required' })`
+                : ''
+            },`;
             break;
           default:
-            console.log('Unknown element type:', type);
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, '${label} is required')` : ''
+            },`;
         }
       });
     });
 
     js += `
-});
-  .onSuccess((event) => {
-    console.log('Form submitted successfully!');
-    // You can add your form submission logic here
-});
+    });
+
+    function clearErrors() {
+        Object.values(errorElements).forEach(el => {
+            if (el) el.textContent = '';
+        });
+        // Clear validation states
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+    }
+
+    function validateField(field) {
+        const fieldName = field.name;
+        const fieldValue = field.value;
+        const fieldSchema = formSchema.shape[fieldName];
+        
+        if (!fieldSchema) return;
+        
+        const result = fieldSchema.safeParse(fieldValue);
+        const errorElement = document.getElementById(fieldName + 'Error');
+        
+        if (result.success) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+            if (errorElement) errorElement.textContent = '';
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+            if (errorElement) errorElement.textContent = result.error.errors[0].message;
+        }
+    }
+
+    function displayErrors(errors) {
+        clearErrors();
+        errors.forEach(error => {
+            const field = error.path[0];
+            const inputField = document.querySelector(\`[name="\${field}"]\`);
+            if (inputField) {
+                inputField.classList.add('is-invalid');
+            }
+            if (errorElements[field]) {
+                errorElements[field].textContent = error.message;
+            }
+        });
+    }
+
+    // Phone number formatting
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach(phoneInput => {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\\D/g, '');
+            value = value.replace(/^(\\d{0,3})(\\d{0,3})(\\d{0,4}).*/, '($1) $2-$3').trim();
+            e.target.value = value;
+            validateField(e.target);
+        });
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const formValues = Object.fromEntries(formData.entries());
+        
+        const result = formSchema.safeParse(formValues);
+        
+        if (result.success) {
+            clearErrors();
+            // Add success state to all fields
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.classList.add('is-valid');
+            });
+            form.submit();
+        } else {
+            displayErrors(result.error.errors);
+        }
+    });
+
+    // Add input event listeners to validate fields in real-time
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', () => {
+            validateField(field);
+        });
+        
+        field.addEventListener('blur', () => {
+            validateField(field);
+        });
+    });
 </script>`;
 
     return js;
