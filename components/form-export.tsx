@@ -14,7 +14,7 @@ interface FormExportProps {
   formRows: FormRow[];
   confirmationData: ConfirmationData;
 }
-
+let addFields = 'test';
 export default function FormExport({
   formRows,
   confirmationData,
@@ -36,7 +36,7 @@ export default function FormExport({
 
     let html = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>  
   <div class="form-container">
-  <form action="/custom-confirmation.html" method="POST">`;
+  <form id="custom-form" action="/custom-confirmation.html" method="POST">`;
 
     filteredRows.forEach((row) => {
       if (row.elements.length === 0) return;
@@ -76,14 +76,18 @@ export default function FormExport({
 
         switch (type) {
           case 'text':
-          case 'email':
-          case 'tel':
-          case 'number':
-          case 'date':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             } ${required ? 'required' : ''}>`;
+            break;
+          case 'email':
+            break;
+          case 'tel':
+            break;
+          case 'number':
+            break;
+          case 'date':
             break;
           case 'textarea':
             html += `
@@ -146,7 +150,6 @@ export default function FormExport({
         </div>
       </div>`;
       });
-
       html += `
     </div>`;
     });
@@ -298,9 +301,86 @@ textarea {
 }
 </style>`;
   };
+
   const generateJavaScript = () => {
-    return `<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
-    `;
+    if (
+      filteredRows.length === 0 ||
+      filteredRows.every((row) => row.elements.length === 0)
+    )
+      return '';
+
+    let js = `<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+<script>
+    // Phone number formatting with regex
+    document.getElementById('phone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.replace(/^(\d{0,3})(\d{0,3})(\d{0,4}).*/, '($1) $2-$3').trim();
+        e.target.value = value;
+    });
+
+    const validation = new window.JustValidate('#contactForm', {
+        validateBeforeSubmitting: true,
+        errorFieldCssClass: 'is-invalid',
+        successFieldCssClass: 'is-valid',
+        errorLabelCssClass: 'error-message',
+    });
+validation
+`;
+
+    filteredRows.forEach((row) => {
+      if (row.elements.length === 0) return;
+
+      row.elements.forEach((element) => {
+        const { type, label, placeholder } = element;
+        const inputId = label.toLowerCase().replace(/ /g, '-');
+        switch (type) {
+          case 'text':
+            js += `.addField('#${inputId}', [
+        {
+            rule: 'required',
+            errorMessage: '${label} is required',
+        },
+        {
+            rule: 'minLength',
+            value: 2,
+            errorMessage: '${label} must be at least 2 characters',
+        },
+        {
+            rule: 'customRegexp',
+            value: /^[a-zA-Z\s]*$/,
+            errorMessage: '${label} cannot contain numbers',
+        }
+  ])
+  `;
+            break;
+          case 'email':
+            break;
+          case 'tel':
+            break;
+          case 'number':
+            break;
+          case 'date':
+            break;
+          case 'textarea':
+            js += ``;
+            break;
+          case 'select':
+            break;
+          case 'file':
+            break;
+        }
+      });
+    });
+
+    js += `
+});
+  .onSuccess((event) => {
+    console.log('Form submitted successfully!');
+    // You can add your form submission logic here
+});
+</script>`;
+
+    return js;
   };
 
   const generateConfirmationCode = () => {
