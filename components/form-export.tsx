@@ -271,29 +271,6 @@ select {
   transition: all 0.2s ease;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-}
-
-input[type="text"].is-valid,
-input[type="email"].is-valid,
-input[type="tel"].is-valid,
-input[type="number"].is-valid,
-input[type="date"].is-valid,
-textarea.is-valid,
-select.is-valid {
-  border-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
 input[type="text"].is-invalid,
 input[type="email"].is-invalid,
 input[type="tel"].is-invalid,

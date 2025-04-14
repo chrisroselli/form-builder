@@ -259,6 +259,7 @@ export default function FormBuilder() {
               formRows={formRows}
               submitButtonTitle={confirmationData.submitButtonTitle}
               enableSMS={confirmationData.enableSMS}
+              recaptchaSiteKey={confirmationData.recaptchaSiteKey}
             />
           </TabsContent>
 

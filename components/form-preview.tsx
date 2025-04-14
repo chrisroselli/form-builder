@@ -15,18 +15,36 @@ import { Label } from './ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useEffect } from 'react';
 
 interface FormPreviewProps {
   formRows: FormRow[];
   submitButtonTitle?: string;
   enableSMS?: boolean;
+  recaptchaSiteKey?: string;
 }
 
 export default function FormPreview({
   formRows,
   submitButtonTitle = 'Submit Form',
   enableSMS = false,
+  recaptchaSiteKey,
 }: FormPreviewProps) {
+  // Load reCAPTCHA script
+  useEffect(() => {
+    if (recaptchaSiteKey) {
+      const script = document.createElement('script');
+      script.src = 'https://www.google.com/recaptcha/api.js';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [recaptchaSiteKey]);
+
   // Filter out placeholder elements for the preview
   const filteredRows = formRows.map((row) => ({
     ...row,
@@ -34,6 +52,26 @@ export default function FormPreview({
   }));
 
   const allElements = filteredRows.flatMap((row) => row.elements);
+
+  // Add telephone formatting effect
+  useEffect(() => {
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach((phoneInput) => {
+      phoneInput.addEventListener('input', function (e) {
+        let value = (e.target as HTMLInputElement).value.replace(/\D/g, '');
+        value = value
+          .replace(/^(\d{0,3})(\d{0,3})(\d{0,4}).*/, '($1) $2-$3')
+          .trim();
+        (e.target as HTMLInputElement).value = value;
+      });
+    });
+
+    return () => {
+      phoneInputs.forEach((phoneInput) => {
+        phoneInput.removeEventListener('input', () => {});
+      });
+    };
+  }, [filteredRows]);
 
   // Create a Zod schema based on form elements
   const createValidationSchema = () => {
@@ -43,38 +81,42 @@ export default function FormPreview({
       const { id, type, required, label } = element;
       let fieldSchema;
 
-      switch (type) {
-        case 'email':
-          fieldSchema = z.string().email(`Please enter a valid email address`);
-          break;
-        case 'tel':
-          fieldSchema = z
-            .string()
-            .regex(
+      if (type === 'checkbox') {
+        fieldSchema = required
+          ? z.boolean().refine((val) => val === true, {
+              message: `${label} is required`,
+            })
+          : z.boolean();
+      } else {
+        let baseSchema = z.string();
+
+        switch (type) {
+          case 'text':
+            baseSchema = baseSchema.min(
+              2,
+              `${label} must be at least 2 characters`
+            );
+            break;
+          case 'email':
+            baseSchema = baseSchema.email('Please enter a valid email address');
+            break;
+          case 'tel':
+            baseSchema = baseSchema.regex(
               /^\(\d{3}\) \d{3}-\d{4}$/,
               'Please enter a valid phone number in the format (xxx) xxx-xxxx'
             );
-          break;
-        case 'number':
-          fieldSchema = z
-            .string()
-            .regex(/^\d+$/, 'Please enter a valid number');
-          break;
-        case 'checkbox':
-          fieldSchema = z.boolean();
-          break;
-        default:
-          fieldSchema = z.string();
-      }
-
-      if (required) {
-        if (type === 'checkbox') {
-          fieldSchema = z.boolean().refine((val) => val === true, {
-            message: `${label} is required`,
-          });
-        } else if (typeof fieldSchema === 'object' && 'min' in fieldSchema) {
-          fieldSchema = fieldSchema.min(1, `${label} is required`);
+            break;
+          case 'number':
+            baseSchema = baseSchema.regex(
+              /^\d+$/,
+              'Please enter a valid number'
+            );
+            break;
         }
+
+        fieldSchema = required
+          ? baseSchema.min(1, `${label} is required`)
+          : baseSchema;
       }
 
       schemaFields[id] = fieldSchema;
@@ -144,6 +186,18 @@ export default function FormPreview({
                 })}
               </div>
             ))}
+
+            {recaptchaSiteKey && (
+              <div className="form-group">
+                <div
+                  className="g-recaptcha"
+                  data-sitekey={recaptchaSiteKey}
+                ></div>
+                <p className="italic text-sm">
+                  *reCaptcha will valid when add to site.
+                </p>
+              </div>
+            )}
 
             {enableSMS && (
               <div className="flex items-center space-x-2">
