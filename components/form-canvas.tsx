@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import FormElementEditor from './form-element-editor';
 import FormElementRenderer from './form-element-renderer';
 import { Button } from './ui/button';
-import { Trash2, MoveVertical, Plus, Grid, GripVertical } from 'lucide-react';
+import { Trash2, MoveHorizontal, Plus, MoveVertical } from 'lucide-react';
 import { useDrop } from 'react-dnd';
 import { Droppable, Draggable, DragDropContext } from '@hello-pangea/dnd';
 import { cn } from '@/lib/utils';
@@ -361,9 +361,8 @@ function CanvasRow({
             {...dragHandleProps}
             className="cursor-grab p-1 mr-2 hover:bg-gray-100 rounded text-gray-500"
           >
-            <GripVertical size={16} />
+            <MoveVertical size={16} />
           </div>
-          <Grid size={16} className="mr-2 text-gray-500" />
           <span className="text-sm font-medium">Row {rowIndex + 1}</span>
           {columnCount > 1 && (
             <span className="ml-2 text-xs text-gray-500">
@@ -455,7 +454,7 @@ function CanvasRow({
                               {...provided.dragHandleProps}
                               className="cursor-grab p-1 hover:bg-gray-100 rounded"
                             >
-                              <MoveVertical size={14} />
+                              <MoveHorizontal size={14} />
                             </div>
                             <span className="text-sm font-medium text-gray-500">
                               {element.type.charAt(0).toUpperCase() +

@@ -91,13 +91,6 @@ export default function FormExport({
             inputmode="numeric">
           <div id="${inputName}Error" class="error-message"></div>`;
             break;
-          case 'number':
-            html += `
-          <input type="${type}" id="${inputId}" name="${inputName}" ${
-              placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>
-          <div id="${inputName}Error" class="error-message"></div>`;
-            break;
           case 'date':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
@@ -259,7 +252,6 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-input[type="number"],
 input[type="date"],
 textarea,
 select {
@@ -274,7 +266,6 @@ select {
 input[type="text"].is-invalid,
 input[type="email"].is-invalid,
 input[type="tel"].is-invalid,
-input[type="number"].is-invalid,
 input[type="date"].is-invalid,
 textarea.is-invalid,
 select.is-invalid {
@@ -367,10 +358,67 @@ textarea {
 
         switch (type) {
           case 'text':
-            js += `
+            if (element.validation?.type) {
+              switch (element.validation.type) {
+                case 'name':
+                  js += `
       '${inputName}': z.string()${
-              required ? `.min(1, '${label} is required')` : ''
-            }.min(2, '${label} must be at least 2 characters'),`;
+                    required ? `.min(1, '${label} is required')` : ''
+                  }
+        .min(2, '${label} must be at least 2 characters')
+        .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid name'),`;
+                  break;
+                case 'street':
+                  js += `
+      '${inputName}': z.string()${
+                    required ? `.min(1, '${label} is required')` : ''
+                  }
+        .min(5, '${label} must be at least 5 characters')
+        .regex(/^[a-zA-Z0-9\\s.,-]+$/, 'Please enter a valid street address'),`;
+                  break;
+                case 'city':
+                  js += `
+      '${inputName}': z.string()${
+                    required ? `.min(1, '${label} is required')` : ''
+                  }
+        .min(2, '${label} must be at least 2 characters')
+        .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid city name'),`;
+                  break;
+                case 'zip':
+                  js += `
+      '${inputName}': z.string()${
+                    required ? `.min(1, '${label} is required')` : ''
+                  }
+        .regex(/^\\d{5}(-\\d{4})?$/, 'Please enter a valid ZIP code'),`;
+                  break;
+                case 'custom':
+                  js += `
+      '${inputName}': z.string()${
+                    required ? `.min(1, '${label} is required')` : ''
+                  }`;
+                  if (element.validation.minLength) {
+                    js += `
+        .min(${element.validation.minLength}, '${label} must be at least ${element.validation.minLength} characters')`;
+                  }
+                  if (element.validation.maxLength) {
+                    js += `
+        .max(${element.validation.maxLength}, '${label} must be at most ${element.validation.maxLength} characters')`;
+                  }
+                  if (element.validation.pattern) {
+                    js += `
+        .regex(/${element.validation.pattern}/, '${
+                      element.validation.patternMessage || 'Invalid format'
+                    }')`;
+                  }
+                  js += ',';
+                  break;
+              }
+            } else {
+              js += `
+      '${inputName}': z.string()${
+                required ? `.min(1, '${label} is required')` : ''
+              }.min(2, '${label} must be at least 2 characters'),`;
+            }
             break;
           case 'email':
             js += `
@@ -383,12 +431,6 @@ textarea {
       '${inputName}': z.string()${
               required ? `.min(1, 'Phone number is required')` : ''
             }.regex(/^\\(\\d{3}\\) \\d{3}-\\d{4}$/, 'Please enter a valid phone number in the format (xxx) xxx-xxxx'),`;
-            break;
-          case 'number':
-            js += `
-      '${inputName}': z.string()${
-              required ? `.min(1, 'Number is required')` : ''
-            }.regex(/^\\d+$/, 'Please enter a valid number'),`;
             break;
           case 'checkbox':
             js += `

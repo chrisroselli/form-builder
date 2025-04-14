@@ -1,10 +1,8 @@
 'use client';
 
-import type { FormElement, FormElementType } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import type { FormElement } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
 import { PlusCircle, X } from 'lucide-react';
 import { useState } from 'react';
@@ -101,34 +99,6 @@ export default function FormElementEditor({
   return (
     <>
       <div className="space-y-2 mb-2">
-        <Label htmlFor="type" className="font-bold">
-          Type
-        </Label>
-        <Select
-          value={element.type}
-          onValueChange={(value: FormElementType) =>
-            onUpdateElement(element.id, { type: value })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select input type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="text">Text</SelectItem>
-            <SelectItem value="email">Email</SelectItem>
-            <SelectItem value="tel">Telephone</SelectItem>
-            <SelectItem value="number">Number</SelectItem>
-            <SelectItem value="date">Date</SelectItem>
-            <SelectItem value="textarea">Text Area</SelectItem>
-            <SelectItem value="select">Select</SelectItem>
-            <SelectItem value="checkbox">Checkbox</SelectItem>
-            <SelectItem value="radio">Radio</SelectItem>
-            <SelectItem value="file">File</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2 mb-2">
         <Label htmlFor="label" className="font-bold">
           Label
         </Label>
@@ -156,6 +126,115 @@ export default function FormElementEditor({
         </div>
       )}
 
+      {element.type === 'text' && (
+        <div className="space-y-2">
+          <Label className="font-bold">Validation</Label>
+          <Select
+            value={element.validation?.type || 'select'}
+            onValueChange={(value) => {
+              if (value === 'select') {
+                onUpdateElement(element.id, {
+                  validation: undefined,
+                });
+              } else {
+                onUpdateElement(element.id, {
+                  validation: {
+                    ...element.validation,
+                    type: value as
+                      | 'name'
+                      | 'street'
+                      | 'city'
+                      | 'zip'
+                      | 'custom',
+                  },
+                });
+              }
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select validation type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="select">Select type</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="street">Street Address</SelectItem>
+              <SelectItem value="city">City</SelectItem>
+              <SelectItem value="zip">ZIP Code</SelectItem>
+              <SelectItem value="custom">Custom</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {element.validation?.type === 'custom' && (
+            <div className="space-y-2 mt-2">
+              <div className="flex items-center space-x-2">
+                <div className="flex-1">
+                  <Label>Min Length</Label>
+                  <Input
+                    type="number"
+                    placeholder="Min Length"
+                    value={element.validation?.minLength || ''}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        validation: {
+                          ...element.validation,
+                          minLength: Number(e.target.value) || undefined,
+                        },
+                      })
+                    }
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label>Max Length</Label>
+                  <Input
+                    type="number"
+                    placeholder="Max Length"
+                    value={element.validation?.maxLength || ''}
+                    onChange={(e) =>
+                      onUpdateElement(element.id, {
+                        validation: {
+                          ...element.validation,
+                          maxLength: Number(e.target.value) || undefined,
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Regex Pattern</Label>
+                <Input
+                  placeholder="Regex Pattern"
+                  value={element.validation?.pattern || ''}
+                  onChange={(e) =>
+                    onUpdateElement(element.id, {
+                      validation: {
+                        ...element.validation,
+                        pattern: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <Label>Pattern Error Message</Label>
+                <Input
+                  placeholder="Pattern Error Message"
+                  value={element.validation?.patternMessage || ''}
+                  onChange={(e) =>
+                    onUpdateElement(element.id, {
+                      validation: {
+                        ...element.validation,
+                        patternMessage: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {element.type === 'select' && (
         <div className="space-y-2">
           <Label className="font-bold">Options</Label>
@@ -167,7 +246,12 @@ export default function FormElementEditor({
                   onChange={(e) => {
                     const options = [...(element.options || [])];
                     options[index] = e.target.value;
-                    onUpdateElement(element.id, { options });
+                    onUpdateElement(element.id, {
+                      options,
+                      validation: {
+                        type: 'state',
+                      },
+                    });
                   }}
                 />
                 <Button
@@ -195,7 +279,17 @@ export default function FormElementEditor({
                 <PlusCircle size={16} />
               </Button>
             </div>
-            <Button onClick={handleAddUSStates} className="bg-secondary">
+            <Button
+              onClick={() => {
+                handleAddUSStates();
+                onUpdateElement(element.id, {
+                  validation: {
+                    type: 'state',
+                  },
+                });
+              }}
+              className="bg-secondary"
+            >
               Add All US States
             </Button>
           </div>
@@ -262,16 +356,6 @@ export default function FormElementEditor({
           />
         </div>
       )}
-      <div className="flex items-center space-x-2 mt-4">
-        <Checkbox
-          id="required"
-          checked={element.required}
-          onCheckedChange={(checked) =>
-            onUpdateElement(element.id, { required: checked === true })
-          }
-        />
-        <Label htmlFor="required">Input Required</Label>
-      </div>
     </>
   );
 }

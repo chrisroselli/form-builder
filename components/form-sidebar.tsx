@@ -46,11 +46,6 @@ export default function FormSidebar({
       label: 'Telephone',
     },
     {
-      type: 'number' as FormElementType,
-      icon: <Hash size={18} />,
-      label: 'Number',
-    },
-    {
       type: 'date' as FormElementType,
       icon: <Calendar size={18} />,
       label: 'Date',

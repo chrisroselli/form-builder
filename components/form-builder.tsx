@@ -55,10 +55,7 @@ export default function FormBuilder() {
       label: '',
       placeholder: '',
       required: false,
-      options:
-        type === 'select' || type === 'radio'
-          ? ['Option 1', 'Option 2']
-          : undefined,
+      options: type === 'radio' ? ['Option 1', 'Option 2'] : undefined,
       columns: columnWidth || 1, // Use provided column width or default to full width
     };
 

@@ -78,24 +78,95 @@ export default function FormPreview({
     const schemaFields: Record<string, any> = {};
 
     allElements.forEach((element) => {
-      const { id, type, required, label } = element;
+      const { id, type, label, validation } = element;
       let fieldSchema;
 
       if (type === 'checkbox') {
-        fieldSchema = required
-          ? z.boolean().refine((val) => val === true, {
-              message: `${label} is required`,
-            })
-          : z.boolean();
+        fieldSchema = z.boolean().refine((val) => val === true, {
+          message: `${label} is required`,
+        });
       } else {
         let baseSchema = z.string();
 
         switch (type) {
           case 'text':
-            baseSchema = baseSchema.min(
-              2,
-              `${label} must be at least 2 characters`
-            );
+            if (validation?.type) {
+              switch (validation.type) {
+                case 'name':
+                  baseSchema = baseSchema
+                    .min(2, `${label} must be at least 2 characters`)
+                    .regex(/^[a-zA-Z\s-']+$/, 'Please enter a valid name');
+                  break;
+                case 'street':
+                  baseSchema = baseSchema
+                    .min(5, `${label} must be at least 5 characters`)
+                    .regex(
+                      /^[a-zA-Z0-9\s.,-]+$/,
+                      'Please enter a valid street address'
+                    );
+                  break;
+                case 'city':
+                  baseSchema = baseSchema
+                    .min(2, `${label} must be at least 2 characters`)
+                    .regex(/^[a-zA-Z\s-']+$/, 'Please enter a valid city name');
+                  break;
+                case 'zip':
+                  baseSchema = baseSchema.regex(
+                    /^\d{5}(-\d{4})?$/,
+                    'Please enter a valid ZIP code'
+                  );
+                  break;
+                case 'custom':
+                  if (validation.minLength) {
+                    baseSchema = baseSchema.min(
+                      validation.minLength,
+                      `${label} must be at least ${validation.minLength} characters`
+                    );
+                  }
+                  if (validation.maxLength) {
+                    baseSchema = baseSchema.max(
+                      validation.maxLength,
+                      `${label} must be at most ${validation.maxLength} characters`
+                    );
+                  }
+                  if (validation.pattern) {
+                    try {
+                      const regex = new RegExp(validation.pattern);
+                      baseSchema = baseSchema.regex(
+                        regex,
+                        validation.patternMessage || 'Invalid format'
+                      );
+                    } catch (e) {
+                      console.error('Invalid regex pattern:', e);
+                    }
+                  }
+                  break;
+              }
+            } else {
+              baseSchema = baseSchema.min(
+                2,
+                `${label} must be at least 2 characters`
+              );
+            }
+            break;
+          case 'select':
+            if (validation?.type === 'state' && element.options) {
+              fieldSchema = z.string().superRefine((val, ctx) => {
+                if (!val) {
+                  ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: `${label} is required`,
+                  });
+                } else if (!element.options?.includes(val)) {
+                  ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Please select a valid state',
+                  });
+                }
+              });
+            } else {
+              fieldSchema = z.string().min(1, `${label} is required`);
+            }
             break;
           case 'email':
             baseSchema = baseSchema.email('Please enter a valid email address');
@@ -106,17 +177,15 @@ export default function FormPreview({
               'Please enter a valid phone number in the format (xxx) xxx-xxxx'
             );
             break;
-          case 'number':
-            baseSchema = baseSchema.regex(
-              /^\d+$/,
-              'Please enter a valid number'
-            );
-            break;
         }
 
-        fieldSchema = required
-          ? baseSchema.min(1, `${label} is required`)
-          : baseSchema;
+        // Set required to true if there's any validation
+        if (validation || type === 'email' || type === 'tel') {
+          element.required = true;
+          baseSchema = baseSchema.min(1, `${label} is required`);
+        }
+
+        fieldSchema = baseSchema;
       }
 
       schemaFields[id] = fieldSchema;
@@ -133,8 +202,6 @@ export default function FormPreview({
     defaultValues: allElements.reduce((acc, element) => {
       if (element.type === 'checkbox') {
         acc[element.id] = false;
-      } else if (element.type === 'number') {
-        acc[element.id] = 0;
       } else {
         acc[element.id] = '';
       }
@@ -194,7 +261,7 @@ export default function FormPreview({
                   data-sitekey={recaptchaSiteKey}
                 ></div>
                 <p className="italic text-sm">
-                  *reCaptcha will valid when add to site.
+                  *ReCaptcha will validate on website.
                 </p>
               </div>
             )}

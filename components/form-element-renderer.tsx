@@ -40,14 +40,12 @@ export default function FormElementRenderer({
       case 'text':
       case 'email':
       case 'tel':
-      case 'number':
       case 'date':
         return (
           <Input
             id={inputId}
             type={type}
             placeholder={placeholder}
-            required={required}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
             {...(register ? register(id) : {})}
@@ -58,7 +56,6 @@ export default function FormElementRenderer({
           <Textarea
             id={inputId}
             placeholder={placeholder}
-            required={required}
             rows={rows || 3}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
@@ -88,7 +85,6 @@ export default function FormElementRenderer({
           <div className="flex items-center space-x-2">
             <Checkbox
               id={inputId}
-              required={required}
               disabled={!preview}
               {...(register ? register(id) : {})}
             />
@@ -115,7 +111,6 @@ export default function FormElementRenderer({
           <Input
             id={inputId}
             type="file"
-            required={required}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
             {...(register ? register(id) : {})}
