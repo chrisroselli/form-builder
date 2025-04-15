@@ -440,6 +440,12 @@ textarea {
                 : ''
             },`;
             break;
+          case 'select':
+            js += `
+      '${inputName}': z.string()${
+              required ? `.min(1, '${label} is required')` : ''
+            },`;
+            break;
           default:
             js += `
       '${inputName}': z.string()${
@@ -496,17 +502,6 @@ textarea {
             }
         });
     }
-
-    // Phone number formatting
-    const phoneInputs = document.querySelectorAll('input[type="tel"]');
-    phoneInputs.forEach(phoneInput => {
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\\D/g, '');
-            value = value.replace(/^(\\d{0,3})(\\d{0,3})(\\d{0,4}).*/, '($1) $2-$3').trim();
-            e.target.value = value;
-            validateField(e.target);
-        });
-    });
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();

@@ -10,7 +10,6 @@ import {
   CheckSquare,
   Mail,
   Phone,
-  Hash,
   Calendar,
   Radio,
   FileText,

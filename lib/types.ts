@@ -25,7 +25,7 @@ export interface FormElement {
   colIndex?: number; // Track which column this element is placed in
   isPlaceholder?: boolean; // Flag to identify placeholder elements
   validation?: {
-    type?: 'name' | 'street' | 'city' | 'zip' | 'state' | 'custom';
+    type?: 'name' | 'street' | 'city' | 'zip' | 'custom';
     minLength?: number;
     maxLength?: number;
     pattern?: string;

@@ -53,26 +53,6 @@ export default function FormPreview({
 
   const allElements = filteredRows.flatMap((row) => row.elements);
 
-  // Add telephone formatting effect
-  useEffect(() => {
-    const phoneInputs = document.querySelectorAll('input[type="tel"]');
-    phoneInputs.forEach((phoneInput) => {
-      phoneInput.addEventListener('input', function (e) {
-        let value = (e.target as HTMLInputElement).value.replace(/\D/g, '');
-        value = value
-          .replace(/^(\d{0,3})(\d{0,3})(\d{0,4}).*/, '($1) $2-$3')
-          .trim();
-        (e.target as HTMLInputElement).value = value;
-      });
-    });
-
-    return () => {
-      phoneInputs.forEach((phoneInput) => {
-        phoneInput.removeEventListener('input', () => {});
-      });
-    };
-  }, [filteredRows]);
-
   // Create a Zod schema based on form elements
   const createValidationSchema = () => {
     const schemaFields: Record<string, any> = {};
@@ -150,23 +130,7 @@ export default function FormPreview({
             }
             break;
           case 'select':
-            if (validation?.type === 'state' && element.options) {
-              fieldSchema = z.string().superRefine((val, ctx) => {
-                if (!val) {
-                  ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: `${label} is required`,
-                  });
-                } else if (!element.options?.includes(val)) {
-                  ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: 'Please select a valid state',
-                  });
-                }
-              });
-            } else {
-              fieldSchema = z.string().min(1, `${label} is required`);
-            }
+            fieldSchema = z.string().min(1, `${label} is required`);
             break;
           case 'email':
             baseSchema = baseSchema.email('Please enter a valid email address');

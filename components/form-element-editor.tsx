@@ -248,9 +248,6 @@ export default function FormElementEditor({
                     options[index] = e.target.value;
                     onUpdateElement(element.id, {
                       options,
-                      validation: {
-                        type: 'state',
-                      },
                     });
                   }}
                 />
@@ -282,11 +279,6 @@ export default function FormElementEditor({
             <Button
               onClick={() => {
                 handleAddUSStates();
-                onUpdateElement(element.id, {
-                  validation: {
-                    type: 'state',
-                  },
-                });
               }}
               className="bg-secondary"
             >
