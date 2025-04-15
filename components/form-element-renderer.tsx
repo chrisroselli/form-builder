@@ -69,7 +69,7 @@ export default function FormElementRenderer({
               id={inputId}
               className={`w-full ${error ? 'border-red-500' : ''}`}
             >
-              <SelectValue placeholder={placeholder} />
+              <SelectValue placeholder={`Select ${label}`} />
             </SelectTrigger>
             <SelectContent>
               {options?.map((option, index) => (
