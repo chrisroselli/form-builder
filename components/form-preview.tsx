@@ -130,7 +130,19 @@ export default function FormPreview({
             }
             break;
           case 'select':
-            fieldSchema = z.string().min(1, `${label} is required`);
+            if (
+              element.options &&
+              Array.isArray(element.options) &&
+              element.options.length > 0
+            ) {
+              fieldSchema = z
+                .string()
+                .refine((val) => element.options!.includes(val), {
+                  message: `${label} must be one of the available options`,
+                });
+            } else {
+              fieldSchema = z.string().min(1, `${label} is required`);
+            }
             break;
           case 'email':
             baseSchema = baseSchema.email('Please enter a valid email address');
