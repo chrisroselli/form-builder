@@ -69,15 +69,13 @@ export default function FormElementRenderer({
           <Input
             id={inputId}
             type={type}
-            placeholder={placeholder || '(xxx) xxx-xxxx'}
+            placeholder={placeholder}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
             {...registered}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const formatted = formatPhoneNumber(e.target.value);
-              e.target.value = formatted;
-              if (originalOnChange) originalOnChange(e);
-            }}
+            onChange={originalOnChange}
+            inputMode="numeric"
+            maxLength={10}
           />
         );
       }

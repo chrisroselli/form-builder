@@ -86,7 +86,7 @@ export default function FormExport({
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             }
-            inputmode="numeric"><div id="${inputName}Error" class="error-message"></div>`;
+            inputmode="numeric" maxLength="10"><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'date':
             html += `
@@ -395,7 +395,7 @@ const formSchema = z.object({`;
             js += `
   '${inputName}': z.string()${
               required ? `.min(1, 'Phone number is required')` : ''
-            }.regex(/^\\(\\d{3}\\) \\d{3}-\\d{4}$/, 'Please enter a valid phone number in the format (xxx) xxx-xxxx'),`;
+            }.regex(/^\\d{10}$/, 'Phone number must be 10 digits'),`;
             break;
           case 'checkbox':
             js += `

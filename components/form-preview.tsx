@@ -129,8 +129,8 @@ export default function FormPreview({
             break;
           case 'tel':
             baseSchema = baseSchema.regex(
-              /^\(\d{3}\) \d{3}-\d{4}$/,
-              'Please enter a valid phone number in the format (xxx) xxx-xxxx'
+              /^\d{10}$/,
+              'Phone number must be 10 digits'
             );
             break;
           case 'select':
