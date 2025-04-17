@@ -11,13 +11,24 @@ import {
   SelectValue,
 } from './ui/select';
 import { Textarea } from './ui/textarea';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import { UseFormRegister, FieldErrors, Controller } from 'react-hook-form';
 
 interface FormElementRendererProps {
   element: FormElement;
   preview?: boolean;
   register?: UseFormRegister<any>;
   errors?: FieldErrors<any>;
+  control?: any;
+}
+
+// Helper to format phone number as (xxx) xxx-xxxx
+function formatPhoneNumber(value: string) {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '');
+  if (digits.length === 0) return '';
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
 }
 
 export default function FormElementRenderer({
@@ -25,6 +36,7 @@ export default function FormElementRenderer({
   preview = false,
   register,
   errors,
+  control,
 }: FormElementRendererProps) {
   const { id, type, label, placeholder, required, options, rows } = element;
   const inputId = `form-element-${id}`;
@@ -39,7 +51,6 @@ export default function FormElementRenderer({
     switch (type) {
       case 'text':
       case 'email':
-      case 'tel':
       case 'date':
         return (
           <Input
@@ -51,6 +62,25 @@ export default function FormElementRenderer({
             {...(register ? register(id) : {})}
           />
         );
+      case 'tel': {
+        const registered = register ? register(id) : {};
+        const originalOnChange = (registered as any)?.onChange;
+        return (
+          <Input
+            id={inputId}
+            type={type}
+            placeholder={placeholder || '(xxx) xxx-xxxx'}
+            className={`w-full ${error ? 'border-red-500' : ''}`}
+            disabled={!preview}
+            {...registered}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const formatted = formatPhoneNumber(e.target.value);
+              e.target.value = formatted;
+              if (originalOnChange) originalOnChange(e);
+            }}
+          />
+        );
+      }
       case 'textarea':
         return (
           <Textarea
@@ -63,34 +93,51 @@ export default function FormElementRenderer({
           />
         );
       case 'select':
-        return (
-          <Select disabled={!preview}>
-            <SelectTrigger
-              id={inputId}
-              className={`w-full ${error ? 'border-red-500' : ''}`}
-            >
-              <SelectValue placeholder={`Select ${label}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {options?.map((option, index) => (
-                <SelectItem key={index} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
+        return register && control ? (
+          <Controller
+            name={id}
+            control={control}
+            render={({ field }) => (
+              <Select
+                disabled={!preview}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger
+                  id={inputId}
+                  className={`w-full ${error ? 'border-red-500' : ''}`}
+                >
+                  <SelectValue placeholder={`Select ${label}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {options?.map((option, index) => (
+                    <SelectItem key={index} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        ) : null;
       case 'checkbox':
-        return (
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={inputId}
-              disabled={!preview}
-              {...(register ? register(id) : {})}
-            />
-            <Label htmlFor={inputId}>{label}</Label>
-          </div>
-        );
+        return register && control ? (
+          <Controller
+            name={id}
+            control={control}
+            render={({ field }) => (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={inputId}
+                  disabled={!preview}
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <Label htmlFor={inputId}>{label}</Label>
+              </div>
+            )}
+          />
+        ) : null;
       case 'radio':
         return (
           <RadioGroup disabled={!preview}>

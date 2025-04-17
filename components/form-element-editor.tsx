@@ -237,7 +237,21 @@ export default function FormElementEditor({
 
       {element.type === 'select' && (
         <div className="space-y-2">
-          <Label className="font-bold">Options</Label>
+          <div className="flex items-center space-x-2 my-2">
+            <input
+              id={`required-select-${element.id}`}
+              type="checkbox"
+              checked={!!element.required}
+              onChange={(e) =>
+                onUpdateElement(element.id, { required: e.target.checked })
+              }
+            />
+            <Label htmlFor={`required-select-${element.id}`}>Required</Label>
+          </div>
+          <Label className="font-bold">
+            Options
+            {element.required && <span className="text-red-500 ml-1">*</span>}
+          </Label>
           <div className="space-y-2">
             {element.options?.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">

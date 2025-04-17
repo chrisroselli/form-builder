@@ -35,8 +35,7 @@ export default function FormExport({
     )
       return '';
 
-    let html = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>  
-  <div class="form-container">
+    let html = `<div class="form-container">
   <form id="custom-form" action="/custom-confirmation.html" method="POST">`;
 
     filteredRows.forEach((row) => {
@@ -80,36 +79,32 @@ export default function FormExport({
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>
-          <div id="${inputName}Error" class="error-message"></div>`;
+            }><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'tel':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}
-            inputmode="numeric">
-          <div id="${inputName}Error" class="error-message"></div>`;
+            }
+            inputmode="numeric"><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'date':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>
-          <div id="${inputName}Error" class="error-message"></div>`;
+            }><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'textarea':
             html += `
           <textarea id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } rows="${rows || 3}" ${required ? 'required' : ''}></textarea>
-          <div id="${inputName}Error" class="error-message"></div>`;
+            } rows="${
+              rows || 3
+            }"></textarea><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'select':
             html += `
-          <select id="${inputId}" name="${inputName}" ${
-              required ? 'required' : ''
-            }>
+          <select id="${inputId}" name="${inputName}">
             <option value="" disabled selected>${
               placeholder || 'Select an option'
             }</option>`;
@@ -118,15 +113,12 @@ export default function FormExport({
             <option value="${option}">${option}</option>`;
             });
             html += `
-          </select>
-          <div id="${inputName}Error" class="error-message"></div>`;
+          </select><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'checkbox':
             html += `
           <div class="checkbox-wrapper">
-            <input type="checkbox" id="${inputId}" name="${inputName}" ${
-              required ? 'required' : ''
-            }>
+            <input type="checkbox" id="${inputId}" name="${inputName}">
             ${label ? `<label for="${inputId}">${label}</label>` : ''}
             <div id="${inputName}Error" class="error-message"></div>
           </div>`;
@@ -137,9 +129,7 @@ export default function FormExport({
             options?.forEach((option, index) => {
               html += `
             <div class="radio-wrapper">
-              <input type="radio" id="${inputId}-${index}" name="${inputId}" value="${option}" ${
-                required ? 'required' : ''
-              }>
+              <input type="radio" id="${inputId}-${index}" name="${inputId}" value="${option}">
               ${
                 label
                   ? `<label for="${inputId}-${index}">${option}</label>`
@@ -153,17 +143,14 @@ export default function FormExport({
             break;
           case 'file':
             html += `
-          <input type="file" id="${inputId}" name="${inputName}" ${
-              required ? 'required' : ''
-            }>
+          <input type="file" id="${inputId}" name="${inputName}">
           <div id="${inputName}Error" class="error-message"></div>`;
             break;
           default:
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } ${required ? 'required' : ''}>
-          <div id="${inputName}Error" class="error-message"></div>`;
+            }><div id="${inputName}Error" class="error-message"></div>`;
         }
 
         html += `
@@ -181,7 +168,7 @@ export default function FormExport({
     if (confirmationData.enableSMS) {
       html += `
       <div class="checkbox-wrapper">
-        <input type="checkbox" id="sms-disclaimer" name="sms_disclaimer" required>
+        <input type="checkbox" id="sms-disclaimer" name="sms_disclaimer">
         <label for="sms-disclaimer">
           <Label htmlFor="sms-disclaimer" className="text-xs italic">
                   By checking this box, you agree to receive text messages from
@@ -295,21 +282,6 @@ textarea {
   margin-left: 2px;
 }
 
-.submit-button {
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 16px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-button:hover {
-  background-color: #4338ca;
-}
-
 .error-message {
   color: #ef4444;
   font-size: 14px;
@@ -325,11 +297,12 @@ textarea {
     )
       return '';
 
-    let js = `<script type="module">
-    import { z } from 'https://cdn.jsdelivr.net/npm/zod@3.22.4/+esm';
+    let js = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script type="module">
+import { z } from 'https://cdn.jsdelivr.net/npm/zod@3.22.4/+esm';
 
-    const form = document.getElementById('custom-form');
-    const errorElements = {};`;
+const form = document.getElementById('custom-form');
+const errorElements = {};`;
 
     // Generate error element references
     filteredRows.forEach((row) => {
@@ -339,14 +312,14 @@ textarea {
         const { label } = element;
         const inputName = `form_logger_${label.replace(/ /g, '_')}`;
         js += `
-    errorElements['${inputName}'] = document.getElementById('${inputName}Error');`;
+errorElements['${inputName}'] = document.getElementById('${inputName}Error');`;
       });
     });
 
     js += `
-    
-    // Define the schema
-    const formSchema = z.object({`;
+
+// Define the schema
+const formSchema = z.object({`;
 
     // Generate schema fields
     filteredRows.forEach((row) => {
@@ -362,51 +335,43 @@ textarea {
               switch (element.validation.type) {
                 case 'name':
                   js += `
-      '${inputName}': z.string()${
-                    required ? `.min(1, '${label} is required')` : ''
-                  }
-        .min(2, '${label} must be at least 2 characters')
-        .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid name'),`;
+  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
+    .min(2, '${label} must be at least 2 characters')
+    .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid name'),`;
                   break;
                 case 'street':
                   js += `
-      '${inputName}': z.string()${
-                    required ? `.min(1, '${label} is required')` : ''
-                  }
-        .min(5, '${label} must be at least 5 characters')
-        .regex(/^[a-zA-Z0-9\\s.,-]+$/, 'Please enter a valid street address'),`;
+  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
+    .min(5, '${label} must be at least 5 characters')
+    .regex(/^[a-zA-Z0-9\\s.,-]+$/, 'Please enter a valid street address'),`;
                   break;
                 case 'city':
                   js += `
-      '${inputName}': z.string()${
-                    required ? `.min(1, '${label} is required')` : ''
-                  }
-        .min(2, '${label} must be at least 2 characters')
-        .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid city name'),`;
+  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
+    .min(2, '${label} must be at least 2 characters')
+    .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid city name'),`;
                   break;
                 case 'zip':
                   js += `
-      '${inputName}': z.string()${
-                    required ? `.min(1, '${label} is required')` : ''
-                  }
-        .regex(/^\\d{5}(-\\d{4})?$/, 'Please enter a valid ZIP code'),`;
+  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
+    .regex(/^\\d{5}(-\\d{4})?$/, 'Please enter a valid ZIP code'),`;
                   break;
                 case 'custom':
                   js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
                     required ? `.min(1, '${label} is required')` : ''
                   }`;
                   if (element.validation.minLength) {
                     js += `
-        .min(${element.validation.minLength}, '${label} must be at least ${element.validation.minLength} characters')`;
+    .min(${element.validation.minLength}, '${label} must be at least ${element.validation.minLength} characters')`;
                   }
                   if (element.validation.maxLength) {
                     js += `
-        .max(${element.validation.maxLength}, '${label} must be at most ${element.validation.maxLength} characters')`;
+    .max(${element.validation.maxLength}, '${label} must be at most ${element.validation.maxLength} characters')`;
                   }
                   if (element.validation.pattern) {
                     js += `
-        .regex(/${element.validation.pattern}/, '${
+    .regex(/${element.validation.pattern}/, '${
                       element.validation.patternMessage || 'Invalid format'
                     }')`;
                   }
@@ -415,26 +380,26 @@ textarea {
               }
             } else {
               js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
                 required ? `.min(1, '${label} is required')` : ''
               }.min(2, '${label} must be at least 2 characters'),`;
             }
             break;
           case 'email':
             js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
               required ? `.min(1, 'Email is required')` : ''
             }.email('Please enter a valid email address'),`;
             break;
           case 'tel':
             js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
               required ? `.min(1, 'Phone number is required')` : ''
             }.regex(/^\\(\\d{3}\\) \\d{3}-\\d{4}$/, 'Please enter a valid phone number in the format (xxx) xxx-xxxx'),`;
             break;
           case 'checkbox':
             js += `
-      '${inputName}': z.boolean()${
+  '${inputName}': z.boolean()${
               required
                 ? `.refine(val => val === true, { message: '${label} is required' })`
                 : ''
@@ -442,13 +407,13 @@ textarea {
             break;
           case 'select':
             js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
               required ? `.min(1, '${label} is required')` : ''
             },`;
             break;
           default:
             js += `
-      '${inputName}': z.string()${
+  '${inputName}': z.string()${
               required ? `.min(1, '${label} is required')` : ''
             },`;
         }
@@ -456,83 +421,83 @@ textarea {
     });
 
     js += `
+});
+
+function clearErrors() {
+    Object.values(errorElements).forEach(el => {
+        if (el) el.textContent = '';
     });
-
-    function clearErrors() {
-        Object.values(errorElements).forEach(el => {
-            if (el) el.textContent = '';
-        });
-        // Clear validation states
-        document.querySelectorAll('input, select, textarea').forEach(field => {
-            field.classList.remove('is-valid', 'is-invalid');
-        });
-    }
-
-    function validateField(field) {
-        const fieldName = field.name;
-        const fieldValue = field.value;
-        const fieldSchema = formSchema.shape[fieldName];
-        
-        if (!fieldSchema) return;
-        
-        const result = fieldSchema.safeParse(fieldValue);
-        const errorElement = document.getElementById(fieldName + 'Error');
-        
-        if (result.success) {
-            field.classList.remove('is-invalid');
-            field.classList.add('is-valid');
-            if (errorElement) errorElement.textContent = '';
-        } else {
-            field.classList.remove('is-valid');
-            field.classList.add('is-invalid');
-            if (errorElement) errorElement.textContent = result.error.errors[0].message;
-        }
-    }
-
-    function displayErrors(errors) {
-        clearErrors();
-        errors.forEach(error => {
-            const field = error.path[0];
-            const inputField = document.querySelector(\`[name="\${field}"]\`);
-            if (inputField) {
-                inputField.classList.add('is-invalid');
-            }
-            if (errorElements[field]) {
-                errorElements[field].textContent = error.message;
-            }
-        });
-    }
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        const formValues = Object.fromEntries(formData.entries());
-        
-        const result = formSchema.safeParse(formValues);
-        
-        if (result.success) {
-            clearErrors();
-            // Add success state to all fields
-            document.querySelectorAll('input, select, textarea').forEach(field => {
-                field.classList.add('is-valid');
-            });
-            form.submit();
-        } else {
-            displayErrors(result.error.errors);
-        }
-    });
-
-    // Add input event listeners to validate fields in real-time
+    // Clear validation states
     document.querySelectorAll('input, select, textarea').forEach(field => {
-        field.addEventListener('input', () => {
-            validateField(field);
-        });
-        
-        field.addEventListener('blur', () => {
-            validateField(field);
-        });
+        field.classList.remove('is-valid', 'is-invalid');
     });
+}
+
+function validateField(field) {
+    const fieldName = field.name;
+    const fieldValue = field.value;
+    const fieldSchema = formSchema.shape[fieldName];
+    
+    if (!fieldSchema) return;
+    
+    const result = fieldSchema.safeParse(fieldValue);
+    const errorElement = document.getElementById(fieldName + 'Error');
+    
+    if (result.success) {
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+        if (errorElement) errorElement.textContent = '';
+    } else {
+        field.classList.remove('is-valid');
+        field.classList.add('is-invalid');
+        if (errorElement) errorElement.textContent = result.error.errors[0].message;
+    }
+}
+
+function displayErrors(errors) {
+    clearErrors();
+    errors.forEach(error => {
+        const field = error.path[0];
+        const inputField = document.querySelector(\`[name="\${field}"]\`);
+        if (inputField) {
+            inputField.classList.add('is-invalid');
+        }
+        if (errorElements[field]) {
+            errorElements[field].textContent = error.message;
+        }
+    });
+}
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const formValues = Object.fromEntries(formData.entries());
+    
+    const result = formSchema.safeParse(formValues);
+    
+    if (result.success) {
+        clearErrors();
+        // Add success state to all fields
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.classList.add('is-valid');
+        });
+        form.submit();
+    } else {
+        displayErrors(result.error.errors);
+    }
+});
+
+// Add input event listeners to validate fields in real-time
+document.querySelectorAll('input, select, textarea').forEach(field => {
+    field.addEventListener('input', () => {
+        validateField(field);
+    });
+    
+    field.addEventListener('blur', () => {
+        validateField(field);
+    });
+});
 </script>`;
 
     return js;

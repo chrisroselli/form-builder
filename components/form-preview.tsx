@@ -1,13 +1,7 @@
 'use client';
 
 import type { FormRow } from '@/lib/types';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import FormElementRenderer from './form-element-renderer';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
@@ -16,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useEffect } from 'react';
+import { Controller } from 'react-hook-form';
 
 interface FormPreviewProps {
   formRows: FormRow[];
@@ -59,7 +54,7 @@ export default function FormPreview({
 
     allElements.forEach((element) => {
       const { id, type, label, validation } = element;
-      let fieldSchema;
+      let fieldSchema: z.ZodTypeAny;
 
       if (type === 'checkbox') {
         fieldSchema = z.boolean().refine((val) => val === true, {
@@ -129,21 +124,6 @@ export default function FormPreview({
               );
             }
             break;
-          case 'select':
-            if (
-              element.options &&
-              Array.isArray(element.options) &&
-              element.options.length > 0
-            ) {
-              fieldSchema = z
-                .string()
-                .refine((val) => element.options!.includes(val), {
-                  message: `${label} must be one of the available options`,
-                });
-            } else {
-              fieldSchema = z.string().min(1, `${label} is required`);
-            }
-            break;
           case 'email':
             baseSchema = baseSchema.email('Please enter a valid email address');
             break;
@@ -152,6 +132,11 @@ export default function FormPreview({
               /^\(\d{3}\) \d{3}-\d{4}$/,
               'Please enter a valid phone number in the format (xxx) xxx-xxxx'
             );
+            break;
+          case 'select':
+            baseSchema = baseSchema.min(1, {
+              message: `Please select a ${label}`,
+            });
             break;
         }
 
@@ -167,6 +152,15 @@ export default function FormPreview({
       schemaFields[id] = fieldSchema;
     });
 
+    // Add sms-disclaimer to schema if enableSMS is true
+    if (enableSMS) {
+      schemaFields['sms-disclaimer'] = z
+        .boolean()
+        .refine((val) => val === true, {
+          message: 'You must agree to receive SMS messages',
+        });
+    }
+
     return z.object(schemaFields);
   };
 
@@ -175,14 +169,19 @@ export default function FormPreview({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: allElements.reduce((acc, element) => {
-      if (element.type === 'checkbox') {
-        acc[element.id] = false;
-      } else {
-        acc[element.id] = '';
-      }
-      return acc;
-    }, {} as FormValues),
+    defaultValues: allElements.reduce(
+      (acc, element) => {
+        if (element.type === 'checkbox') {
+          acc[element.id] = false;
+        } else {
+          acc[element.id] = '';
+        }
+        return acc;
+      },
+      enableSMS
+        ? ({ 'sms-disclaimer': false } as FormValues)
+        : ({} as FormValues)
+    ),
   });
 
   function onSubmit(data: FormValues) {
@@ -204,7 +203,7 @@ export default function FormPreview({
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {filteredRows.map((row, rowIndex) => (
+            {filteredRows.map((row) => (
               <div key={row.id} className="flex flex-wrap -mx-2">
                 {row.elements.map((element) => {
                   const columns = element.columns || 1;
@@ -223,6 +222,7 @@ export default function FormPreview({
                         preview={true}
                         register={form.register}
                         errors={form.formState.errors}
+                        control={form.control}
                       />
                     </div>
                   );
@@ -237,39 +237,54 @@ export default function FormPreview({
                   data-sitekey={recaptchaSiteKey}
                 ></div>
                 <p className="italic text-sm">
-                  *ReCaptcha will validate on website.
+                  *ReCaptcha will validate on live site.
                 </p>
               </div>
             )}
 
             {enableSMS && (
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="sms-disclaimer"
-                  {...form.register('sms-disclaimer')}
-                />
-                <Label htmlFor="sms-disclaimer" className="text-xs italic">
-                  By checking this box, you agree to receive text messages from
-                  Connecticut Basement Systems related to appointment setting,
-                  service informational, and marketing messages at the phone
-                  number provided above. You may reply STOP to opt-out at any
-                  time. Reply HELP for assistance. Messages and data rates may
-                  apply. Message frequency will vary. Learn more on our
-                  <a
-                    href="/privacy-policy.html"
-                    className="text-blue-500 hover:underline ml-1"
-                  >
-                    Privacy Policy
-                  </a>{' '}
-                  page and
-                  <a
-                    href="/terms-of-use.html"
-                    className="text-blue-500 hover:underline ml-1"
-                  >
-                    Terms & Conditions
-                  </a>
-                  .
-                </Label>
+              <div className="flex flex-col space-y-1">
+                <div className="flex items-center space-x-2">
+                  <Controller
+                    name="sms-disclaimer"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="sms-disclaimer"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <Label htmlFor="sms-disclaimer" className="text-xs italic">
+                    By checking this box, you agree to receive text messages
+                    from Connecticut Basement Systems related to appointment
+                    setting, service informational, and marketing messages at
+                    the phone number provided above. You may reply STOP to
+                    opt-out at any time. Reply HELP for assistance. Messages and
+                    data rates may apply. Message frequency will vary. Learn
+                    more on our
+                    <a
+                      href="/privacy-policy.html"
+                      className="text-blue-500 hover:underline ml-1"
+                    >
+                      Privacy Policy
+                    </a>{' '}
+                    page and
+                    <a
+                      href="/terms-of-use.html"
+                      className="text-blue-500 hover:underline ml-1"
+                    >
+                      Terms & Conditions
+                    </a>
+                    .
+                  </Label>
+                </div>
+                {form.formState.errors['sms-disclaimer'] && (
+                  <span className="text-red-500 text-xs ml-2">
+                    {form.formState.errors['sms-disclaimer'].message as string}
+                  </span>
+                )}
               </div>
             )}
 
