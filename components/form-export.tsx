@@ -309,6 +309,11 @@ const errorElements = {};`;
 errorElements['${inputName}'] = document.getElementById('${inputName}Error');`;
       });
     });
+    // Add error element reference for sms_disclaimer if enabled
+    if (confirmationData.enableSMS) {
+      js += `
+errorElements['sms_disclaimer'] = document.getElementById('sms_disclaimerError');`;
+    }
 
     js += `
 
@@ -413,6 +418,11 @@ const formSchema = z.object({`;
         }
       });
     });
+    // Add schema field for sms_disclaimer if enabled
+    if (confirmationData.enableSMS) {
+      js += `
+  'sms_disclaimer': z.boolean().refine(val => val === true, { message: 'SMS message consent is required' }),`;
+    }
 
     js += `
 });
@@ -429,7 +439,10 @@ function clearErrors() {
 
 function validateField(field) {
     const fieldName = field.name;
-    const fieldValue = field.value;
+    let fieldValue = field.value;
+    if (fieldName === 'sms_disclaimer') {
+        fieldValue = field.checked === true;
+    }
     const fieldSchema = formSchema.shape[fieldName];
     
     if (!fieldSchema) return;
@@ -467,6 +480,8 @@ form.addEventListener('submit', (e) => {
     
     const formData = new FormData(form);
     const formValues = Object.fromEntries(formData.entries());
+    // Convert sms_disclaimer to boolean (true if checked, false if not)
+    formValues.sms_disclaimer = formValues.sms_disclaimer === 'on' ? true : false;
     
     const result = formSchema.safeParse(formValues);
     
