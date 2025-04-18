@@ -49,7 +49,22 @@ export default function FormElementRenderer({
 
   const renderFormElement = () => {
     switch (type) {
-      case 'text':
+      case 'text': {
+        // Add ZIP code specific input restrictions
+        const isZip = element.validation?.type === 'zip';
+        return (
+          <Input
+            id={inputId}
+            type={type}
+            placeholder={placeholder}
+            className={`w-full ${error ? 'border-red-500' : ''}`}
+            disabled={!preview}
+            maxLength={isZip ? 5 : undefined}
+            inputMode={isZip ? 'numeric' : undefined}
+            {...(register ? register(id) : {})}
+          />
+        );
+      }
       case 'email':
       case 'date':
         return (

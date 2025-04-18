@@ -86,10 +86,12 @@ export default function FormPreview({
                     .regex(/^[a-zA-Z\s-']+$/, 'Please enter a valid city name');
                   break;
                 case 'zip':
-                  baseSchema = baseSchema.regex(
-                    /^\d{5}(-\d{4})?$/,
-                    'Please enter a valid ZIP code'
-                  );
+                  baseSchema = baseSchema
+                    .max(5, `${label} must be exactly 5 digits`)
+                    .regex(
+                      /^\d{5}$/,
+                      'Please enter a valid 5-digit ZIP code (numbers only)'
+                    );
                   break;
                 case 'custom':
                   if (validation.minLength) {
@@ -157,7 +159,7 @@ export default function FormPreview({
       schemaFields['sms-disclaimer'] = z
         .boolean()
         .refine((val) => val === true, {
-          message: 'You must agree to receive SMS messages',
+          message: 'SMS message consent is required',
         });
     }
 
@@ -258,12 +260,11 @@ export default function FormPreview({
                   />
                   <Label htmlFor="sms-disclaimer" className="text-xs italic">
                     By checking this box, you agree to receive text messages
-                    from Connecticut Basement Systems related to appointment
-                    setting, service informational, and marketing messages at
-                    the phone number provided above. You may reply STOP to
-                    opt-out at any time. Reply HELP for assistance. Messages and
-                    data rates may apply. Message frequency will vary. Learn
-                    more on our
+                    from [company] related to appointment setting, service
+                    informational, and marketing messages at the phone number
+                    provided above. You may reply STOP to opt-out at any time.
+                    Reply HELP for assistance. Messages and data rates may
+                    apply. Message frequency will vary. Learn more on our
                     <a
                       href="/privacy-policy.html"
                       className="text-blue-500 hover:underline ml-1"

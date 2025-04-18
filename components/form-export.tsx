@@ -172,11 +172,11 @@ export default function FormExport({
         <label for="sms-disclaimer">
           <Label htmlFor="sms-disclaimer" className="text-xs italic">
                   By checking this box, you agree to receive text messages from
-                  Connecticut Basement Systems related to appointment setting,
-                  service informational, and marketing messages at the phone
-                  number provided above. You may reply STOP to opt-out at any
-                  time. Reply HELP for assistance. Messages and data rates may
-                  apply. Message frequency will vary. Learn more on our
+                  [company] related to appointment setting, service informational,
+                  and marketing messages at the phone number provided above. You
+                  may reply STOP to opt-out at any time. Reply HELP for
+                  assistance. Messages and data rates may apply. Message
+                  frequency will vary. Learn more on our
                   <a href="/privacy-policy.html">Privacy Policy</a> page and
                   <a href="/terms-of-use.html">Terms &amp; Conditions</a>.
         </label>
