@@ -407,7 +407,7 @@ const formSchema = z.object({`;
           case 'select':
             js += `
   '${inputName}': z.string()${
-              required ? `.min(1, '${label} is required')` : ''
+              required ? `.min(1, 'Please select a ${label}')` : ''
             },`;
             break;
           default:

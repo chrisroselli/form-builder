@@ -246,7 +246,9 @@ export default function FormElementEditor({
                 onUpdateElement(element.id, { required: e.target.checked })
               }
             />
-            <Label htmlFor={`required-select-${element.id}`}>Required</Label>
+            <Label htmlFor={`required-select-${element.id}`}>
+              {`${element.label} is required`}
+            </Label>
           </div>
           <Label className="font-bold">
             Options
