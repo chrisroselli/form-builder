@@ -157,9 +157,9 @@ export default function FormElementEditor({
             <SelectContent>
               <SelectItem value="select">Select type</SelectItem>
               <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="street">Street Address</SelectItem>
+              <SelectItem value="street">Street</SelectItem>
               <SelectItem value="city">City</SelectItem>
-              <SelectItem value="zip">ZIP Code</SelectItem>
+              <SelectItem value="zip">Zip Code</SelectItem>
               <SelectItem value="custom">Custom</SelectItem>
             </SelectContent>
           </Select>

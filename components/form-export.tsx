@@ -9,7 +9,6 @@ import { Button } from './ui/button';
 import { Copy } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { z } from 'zod';
 
 interface FormExportProps {
   formRows: FormRow[];
@@ -45,16 +44,8 @@ export default function FormExport({
     <div class="form-row">`;
 
       row.elements.forEach((element) => {
-        const {
-          id,
-          type,
-          label,
-          placeholder,
-          required,
-          options,
-          rows,
-          columns,
-        } = element;
+        const { type, label, placeholder, required, options, rows, columns } =
+          element;
         const inputId = label.toLowerCase().replace(/ /g, '-');
         const inputName = `form_logger_${label.replace(/ /g, '_')}`;
         const columnClass = columns ? `form-col-${columns}` : 'form-col-1';
@@ -73,12 +64,15 @@ export default function FormExport({
               : ''
           }`;
         }
-
         switch (type) {
           case 'text':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
+            } ${
+              element.validation?.type === 'zip'
+                ? `inputmode="numeric" maxLength="5"`
+                : ''
             }><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'tel':
@@ -354,7 +348,7 @@ const formSchema = z.object({`;
                 case 'zip':
                   js += `
   '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
-    .regex(/^\\d{5}(-\\d{4})?$/, 'Please enter a valid ZIP code'),`;
+    .regex(/^\\d{5}$/, 'Please enter a valid 5-digit ZIP code (numbers only)'),`;
                   break;
                 case 'custom':
                   js += `
