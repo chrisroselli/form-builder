@@ -15,6 +15,8 @@ interface ConfirmationSettingsProps {
     notificationEmailAddresses: string;
     submitButtonTitle: string;
     enableSMS: boolean;
+    confirmationH1Text: string;
+    confirmationPText: string;
   };
   setConfirmationData: (data: any) => void;
 }
@@ -103,6 +105,30 @@ export default function ConfirmationSettings({
               type="text"
               value={confirmationData.notificationEmailAddresses}
               onChange={handleChange}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmationH1Text">
+              Confirmation Page H1 Text
+            </Label>
+            <Input
+              id="confirmationH1Text"
+              name="confirmationH1Text"
+              type="text"
+              value={confirmationData.confirmationH1Text}
+              onChange={handleChange}
+              placeholder="Thank you!"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmationPText">Confirmation Page P Text</Label>
+            <Input
+              id="confirmationPText"
+              name="confirmationPText"
+              type="text"
+              value={confirmationData.confirmationPText}
+              onChange={handleChange}
+              placeholder="We have received your information and will get back to you shortly."
             />
           </div>
         </CardContent>

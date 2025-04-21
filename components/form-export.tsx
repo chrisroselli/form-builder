@@ -559,14 +559,21 @@ if(!empty($_POST)) {
           $logger->setSessionId($siteDefineData['cms_tracking_sessions']['session.id']);
           $logger->setFormId('form_logger_');
           $logger->setFormName('${confirmationData.formName}');
-          $logger->setcustomEmailSubject('${confirmationData.customEmailSubject}');
-          $logger->setNotificationEmailAddresses('${confirmationData.notificationEmailAddresses}');
+          $logger->setcustomEmailSubject('${
+            confirmationData.customEmailSubject
+          }');
+          $logger->setNotificationEmailAddresses('${
+            confirmationData.notificationEmailAddresses
+          }');
 
 		// Save the form and send notifications
 	if ($logger->saveData($_POST)) {
 			$output .= '<style>form{display:none;}</style>
-			<h1>Thank you!</h1>
-			<h3>We have received your information and will get back to you shortly.</h3>';
+			<h1>${confirmationData.confirmationH1Text || 'Thank you!'}</h1>
+			<p>${
+        confirmationData.confirmationPText ||
+        'We have received your information and will get back to you shortly.'
+      }</p>';
 		} else {
 			$output .= '<p>Please try your submission again or contact us for assistance.</p>';
 		}

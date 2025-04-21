@@ -19,6 +19,8 @@ export interface ConfirmationData {
   notificationEmailAddresses: string;
   submitButtonTitle: string;
   enableSMS: boolean;
+  confirmationH1Text: string;
+  confirmationPText: string;
 }
 
 export default function FormBuilder() {
@@ -34,6 +36,8 @@ export default function FormBuilder() {
     notificationEmailAddresses: '',
     submitButtonTitle: 'Submit',
     enableSMS: false,
+    confirmationH1Text: '',
+    confirmationPText: '',
   });
 
   // Helper function to get all form elements from all rows
