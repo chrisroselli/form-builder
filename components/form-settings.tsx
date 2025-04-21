@@ -40,7 +40,7 @@ export default function ConfirmationSettings({
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Form Properties</CardTitle>
+          <CardTitle className="text-primary">Form Properties</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -72,7 +72,9 @@ export default function ConfirmationSettings({
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle>Confirmation Page Settings</CardTitle>
+          <CardTitle className="text-primary">
+            Confirmation Page Settings
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -135,11 +137,11 @@ export default function ConfirmationSettings({
       </Card>
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle>reCAPTCHA Settings</CardTitle>
+          <CardTitle className="text-primary">reCAPTCHA Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="recaptchaSiteKey">reCAPTCHA Site Key</Label>
+            <Label htmlFor="recaptchaSiteKey">Site Key</Label>
             <Input
               id="recaptchaSiteKey"
               name="recaptchaSiteKey"
@@ -149,7 +151,7 @@ export default function ConfirmationSettings({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="recaptchaSecretKey">reCAPTCHA Secret Key</Label>
+            <Label htmlFor="recaptchaSecretKey">Secret Key</Label>
             <Input
               id="recaptchaSecretKey"
               name="recaptchaSecretKey"

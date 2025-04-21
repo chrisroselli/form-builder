@@ -180,7 +180,9 @@ export default function FormExport({
     }
 
     html += `
-      <button type="submit" class="submit-button">${confirmationData.submitButtonTitle}</button>
+      <button type="submit" class="submit-button">${
+        confirmationData.submitButtonTitle || 'Submit'
+      }</button>
     </div>
   </form>
 </div>`;

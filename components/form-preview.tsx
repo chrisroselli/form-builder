@@ -290,7 +290,7 @@ export default function FormPreview({
             )}
 
             <Button type="submit" className="w-full">
-              {submitButtonTitle}
+              {submitButtonTitle || 'Submit'}
             </Button>
           </form>
         )}

@@ -34,7 +34,7 @@ export default function FormBuilder() {
     formName: '',
     customEmailSubject: '',
     notificationEmailAddresses: '',
-    submitButtonTitle: 'Submit',
+    submitButtonTitle: '',
     enableSMS: false,
     confirmationH1Text: '',
     confirmationPText: '',

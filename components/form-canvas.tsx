@@ -124,7 +124,7 @@ export default function FormCanvas({
       <div className="md:col-span-2">
         <Card>
           <CardHeader className="flex flex-row items-start justify-between">
-            <CardTitle>Form Canvas</CardTitle>
+            <CardTitle className="text-primary">Form Canvas</CardTitle>
             <div className="flex items-center gap-2">
               <div className="flex border rounded-md overflow-hidden">
                 <Button
