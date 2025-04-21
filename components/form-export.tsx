@@ -157,7 +157,8 @@ export default function FormExport({
 
     html += `
     <div class="form-group">
-    <div class="g-recaptcha" data-sitekey="${confirmationData.recaptchaSiteKey}"></div>`;
+    <div class="g-recaptcha" data-sitekey="${confirmationData.recaptchaSiteKey}" data-callback="onRecaptchaSuccess"></div>
+    <div id="recaptchaError" class="error-message"></div>`;
 
     if (confirmationData.enableSMS) {
       html += `
@@ -315,6 +316,10 @@ errorElements['${inputName}'] = document.getElementById('${inputName}Error');`;
 errorElements['sms_disclaimer'] = document.getElementById('sms_disclaimerError');`;
     }
 
+    // Add error element reference for reCAPTCHA
+    js += `
+errorElements['g-recaptcha-response'] = document.getElementById('recaptchaError');`;
+
     js += `
 
 // Define the schema
@@ -424,8 +429,21 @@ const formSchema = z.object({`;
   'sms_disclaimer': z.boolean().refine(val => val === true, { message: 'SMS message consent is required' }),`;
     }
 
+    // Add schema field for reCAPTCHA
+    js += `
+  'g-recaptcha-response': z.string().min(1, 'Please complete the reCAPTCHA verification'),`;
+
     js += `
 });
+
+// Add callback for reCAPTCHA
+window.onRecaptchaSuccess = function() {
+    // Clear reCAPTCHA error message when checkbox is checked
+    const recaptchaError = document.getElementById('recaptchaError');
+    if (recaptchaError) {
+        recaptchaError.textContent = '';
+    }
+};
 
 function clearErrors() {
     Object.values(errorElements).forEach(el => {
@@ -482,6 +500,9 @@ form.addEventListener('submit', (e) => {
     const formValues = Object.fromEntries(formData.entries());
     // Convert sms_disclaimer to boolean (true if checked, false if not)
     formValues.sms_disclaimer = formValues.sms_disclaimer === 'on' ? true : false;
+    
+    // Get reCAPTCHA response
+    formValues['g-recaptcha-response'] = grecaptcha.getResponse();
     
     const result = formSchema.safeParse(formValues);
     
