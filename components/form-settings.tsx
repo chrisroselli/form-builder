@@ -95,14 +95,14 @@ export default function ConfirmationSettings({
           </div>
           <div className="space-y-2">
             <Label htmlFor="notificationEmailAddresses">
-              Notification Email Addresses
+              Notification Email Address
             </Label>
-            <Textarea
+            <Input
               id="notificationEmailAddresses"
               name="notificationEmailAddresses"
+              type="text"
               value={confirmationData.notificationEmailAddresses}
               onChange={handleChange}
-              placeholder="Separate addresses with commas"
             />
           </div>
         </CardContent>

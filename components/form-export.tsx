@@ -576,7 +576,7 @@ if(!empty($_POST)) {
 	}
 } else {
     // Missing POST data
-	$output .= '<h1>Looks like you forgot something!</h1><p>Please fill out the registration form completely.</p>';
+	$output .= '<h1>Looks like you forgot to fill out a form field.</h1><p>Please fill out the form completely.</p>';
 }
 echo $output;
 ?>`;
