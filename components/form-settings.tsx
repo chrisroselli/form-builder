@@ -6,6 +6,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import type { FormEvent } from 'react';
 import { useEffect } from 'react';
+import { Separator } from './ui/separator';
 
 interface ConfirmationSettingsProps {
   confirmationData: {
@@ -58,77 +59,87 @@ export default function ConfirmationSettings({
           <CardTitle className="text-primary">Form Properties</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="primaryColor">Primary Color</Label>
-            <div className="flex gap-2">
-              <Input
-                id="primaryColor"
-                name="primaryColor"
-                type="color"
-                value={confirmationData.primaryColor || '#000000'}
-                onChange={handleChange}
-                className="h-10 w-10 p-1"
-              />
-              <Input
-                type="text"
-                value={confirmationData.primaryColor || '#000000'}
-                onChange={(e) => {
-                  setConfirmationData((prev: any) => ({
-                    ...prev,
-                    primaryColor: e.target.value,
-                  }));
-                }}
-                className="flex-1"
-              />
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Color Fields */}
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="primaryColor">Primary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="primaryColor"
+                    name="primaryColor"
+                    type="color"
+                    value={confirmationData.primaryColor || '#000000'}
+                    onChange={handleChange}
+                    className="h-10 w-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={confirmationData.primaryColor || '#000000'}
+                    onChange={(e) => {
+                      setConfirmationData((prev: any) => ({
+                        ...prev,
+                        primaryColor: e.target.value,
+                      }));
+                    }}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="secondaryColor">Secondary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="secondaryColor"
+                    name="secondaryColor"
+                    type="color"
+                    value={confirmationData.secondaryColor || '#000000'}
+                    onChange={handleChange}
+                    className="h-10 w-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={confirmationData.secondaryColor || '#000000'}
+                    onChange={(e) => {
+                      setConfirmationData((prev: any) => ({
+                        ...prev,
+                        secondaryColor: e.target.value,
+                      }));
+                    }}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="secondaryColor">Secondary Color</Label>
-            <div className="flex gap-2">
-              <Input
-                id="secondaryColor"
-                name="secondaryColor"
-                type="color"
-                value={confirmationData.secondaryColor || '#000000'}
-                onChange={handleChange}
-                className="h-10 w-10 p-1"
-              />
-              <Input
-                type="text"
-                value={confirmationData.secondaryColor || '#000000'}
-                onChange={(e) => {
-                  setConfirmationData((prev: any) => ({
-                    ...prev,
-                    secondaryColor: e.target.value,
-                  }));
-                }}
-                className="flex-1"
-              />
+            {/* SMS and Submit Button Fields */}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="flex flex-col">
+                <div className="space-y-2">
+                  <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
+                  <div className="mt-2">
+                    <Input
+                      id="submitButtonTitle"
+                      name="submitButtonTitle"
+                      type="text"
+                      value={confirmationData.submitButtonTitle}
+                      onChange={handleChange}
+                      placeholder="Submit"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>
+                <input
+                  type="checkbox"
+                  id="enableSMS"
+                  name="enableSMS"
+                  checked={confirmationData.enableSMS}
+                  onChange={handleChange}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+              </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>
-              <input
-                type="checkbox"
-                id="enableSMS"
-                name="enableSMS"
-                checked={confirmationData.enableSMS}
-                onChange={handleChange}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
-            <Input
-              id="submitButtonTitle"
-              name="submitButtonTitle"
-              type="text"
-              value={confirmationData.submitButtonTitle}
-              onChange={handleChange}
-              placeholder="Submit"
-            />
           </div>
         </CardContent>
       </Card>
