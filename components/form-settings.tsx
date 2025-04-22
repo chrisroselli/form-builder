@@ -133,98 +133,103 @@ export default function ConfirmationSettings({
         </CardContent>
       </Card>
 
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-primary">
-            Confirmation Page Settings
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="formName">Form Name</Label>
-            <Input
-              id="formName"
-              name="formName"
-              type="text"
-              value={confirmationData.formName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="customEmailSubject">Custom Email Subject</Label>
-            <Input
-              id="customEmailSubject"
-              name="customEmailSubject"
-              type="text"
-              value={confirmationData.customEmailSubject}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="notificationEmailAddresses">
-              Notification Email Address
-            </Label>
-            <Input
-              id="notificationEmailAddresses"
-              name="notificationEmailAddresses"
-              type="text"
-              value={confirmationData.notificationEmailAddresses}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmationH1Text">
-              Confirmation Page H1 Text
-            </Label>
-            <Input
-              id="confirmationH1Text"
-              name="confirmationH1Text"
-              type="text"
-              value={confirmationData.confirmationH1Text}
-              onChange={handleChange}
-              placeholder="Thank you!"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmationPText">Confirmation Page P Text</Label>
-            <Input
-              id="confirmationPText"
-              name="confirmationPText"
-              type="text"
-              value={confirmationData.confirmationPText}
-              onChange={handleChange}
-              placeholder="We have received your information and will get back to you shortly."
-            />
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-primary">reCAPTCHA Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="recaptchaSiteKey">Site Key</Label>
-            <Input
-              id="recaptchaSiteKey"
-              name="recaptchaSiteKey"
-              type="text"
-              value={confirmationData.recaptchaSiteKey}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="recaptchaSecretKey">Secret Key</Label>
-            <Input
-              id="recaptchaSecretKey"
-              name="recaptchaSecretKey"
-              type="text"
-              value={confirmationData.recaptchaSecretKey}
-              onChange={handleChange}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Confirmation Page Settings and reCAPTCHA Settings side by side */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary">
+              Confirmation Page Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="formName">Form Name</Label>
+              <Input
+                id="formName"
+                name="formName"
+                type="text"
+                value={confirmationData.formName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="customEmailSubject">Custom Email Subject</Label>
+              <Input
+                id="customEmailSubject"
+                name="customEmailSubject"
+                type="text"
+                value={confirmationData.customEmailSubject}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="notificationEmailAddresses">
+                Notification Email Address
+              </Label>
+              <Input
+                id="notificationEmailAddresses"
+                name="notificationEmailAddresses"
+                type="text"
+                value={confirmationData.notificationEmailAddresses}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmationH1Text">
+                Confirmation Page H1 Text
+              </Label>
+              <Input
+                id="confirmationH1Text"
+                name="confirmationH1Text"
+                type="text"
+                value={confirmationData.confirmationH1Text}
+                onChange={handleChange}
+                placeholder="Thank you!"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmationPText">
+                Confirmation Page P Text
+              </Label>
+              <Input
+                id="confirmationPText"
+                name="confirmationPText"
+                type="text"
+                value={confirmationData.confirmationPText}
+                onChange={handleChange}
+                placeholder="We have received your information and will get back to you shortly."
+              />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary">reCAPTCHA Settings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="recaptchaSiteKey">Site Key</Label>
+              <Input
+                id="recaptchaSiteKey"
+                name="recaptchaSiteKey"
+                type="text"
+                value={confirmationData.recaptchaSiteKey}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="recaptchaSecretKey">Secret Key</Label>
+              <Input
+                id="recaptchaSecretKey"
+                name="recaptchaSecretKey"
+                type="text"
+                value={confirmationData.recaptchaSecretKey}
+                onChange={handleChange}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 }
