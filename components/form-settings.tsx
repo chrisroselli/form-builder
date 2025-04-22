@@ -6,7 +6,6 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import type { FormEvent } from 'react';
 import { useEffect } from 'react';
-import { Separator } from './ui/separator';
 
 interface ConfirmationSettingsProps {
   confirmationData: {
@@ -54,14 +53,14 @@ export default function ConfirmationSettings({
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-primary">Form Properties</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Color Fields */}
-            <div className="flex-1 space-y-4">
+      {/* Form Properties and reCAPTCHA Settings on the left, Confirmation Page Settings on the right */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary">Form Properties</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="primaryColor">Primary Color</Label>
                 <div className="flex gap-2">
@@ -110,42 +109,60 @@ export default function ConfirmationSettings({
                   />
                 </div>
               </div>
-            </div>
-            {/* SMS and Submit Button Fields */}
-            <div className="flex-1 flex flex-col gap-4">
-              <div className="flex flex-col">
-                <div className="space-y-2">
-                  <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
-                  <div className="mt-2">
-                    <Input
-                      id="submitButtonTitle"
-                      name="submitButtonTitle"
-                      type="text"
-                      value={confirmationData.submitButtonTitle}
-                      onChange={handleChange}
-                      placeholder="Submit"
-                    />
-                  </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>
+                  <input
+                    type="checkbox"
+                    id="enableSMS"
+                    name="enableSMS"
+                    checked={confirmationData.enableSMS}
+                    onChange={handleChange}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>
-                <input
-                  type="checkbox"
-                  id="enableSMS"
-                  name="enableSMS"
-                  checked={confirmationData.enableSMS}
+              <div className="space-y-2">
+                <Label htmlFor="submitButtonTitle">Submit Button Title</Label>
+                <Input
+                  id="submitButtonTitle"
+                  name="submitButtonTitle"
+                  type="text"
+                  value={confirmationData.submitButtonTitle}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  placeholder="Submit"
                 />
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Confirmation Page Settings and reCAPTCHA Settings side by side */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary">reCAPTCHA Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="recaptchaSiteKey">Site Key</Label>
+                <Input
+                  id="recaptchaSiteKey"
+                  name="recaptchaSiteKey"
+                  type="text"
+                  value={confirmationData.recaptchaSiteKey}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="recaptchaSecretKey">Secret Key</Label>
+                <Input
+                  id="recaptchaSecretKey"
+                  name="recaptchaSecretKey"
+                  type="text"
+                  value={confirmationData.recaptchaSecretKey}
+                  onChange={handleChange}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle className="text-primary">
@@ -189,10 +206,9 @@ export default function ConfirmationSettings({
               <Label htmlFor="confirmationH1Text">
                 Confirmation Page H1 Text
               </Label>
-              <Input
+              <Textarea
                 id="confirmationH1Text"
                 name="confirmationH1Text"
-                type="text"
                 value={confirmationData.confirmationH1Text}
                 onChange={handleChange}
                 placeholder="Thank you!"
@@ -202,40 +218,12 @@ export default function ConfirmationSettings({
               <Label htmlFor="confirmationPText">
                 Confirmation Page P Text
               </Label>
-              <Input
+              <Textarea
                 id="confirmationPText"
                 name="confirmationPText"
-                type="text"
                 value={confirmationData.confirmationPText}
                 onChange={handleChange}
                 placeholder="We have received your information and will get back to you shortly."
-              />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-primary">reCAPTCHA Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="recaptchaSiteKey">Site Key</Label>
-              <Input
-                id="recaptchaSiteKey"
-                name="recaptchaSiteKey"
-                type="text"
-                value={confirmationData.recaptchaSiteKey}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="recaptchaSecretKey">Secret Key</Label>
-              <Input
-                id="recaptchaSecretKey"
-                name="recaptchaSecretKey"
-                type="text"
-                value={confirmationData.recaptchaSecretKey}
-                onChange={handleChange}
               />
             </div>
           </CardContent>
