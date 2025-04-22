@@ -128,7 +128,7 @@ export default function FormElementEditor({
 
       {element.type === 'text' && (
         <div className="space-y-2">
-          <Label className="font-bold">Validation</Label>
+          <Label className="font-bold">Validation type</Label>
           <Select
             value={element.validation?.type || 'select'}
             onValueChange={(value) => {
@@ -250,10 +250,7 @@ export default function FormElementEditor({
               {`${element.label} is required`}
             </Label>
           </div>
-          <Label className="font-bold">
-            Options
-            {element.required && <span className="text-red-500 ml-1">*</span>}
-          </Label>
+          <Label className="font-bold">Options</Label>
           <div className="space-y-2">
             {element.options?.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">

@@ -146,7 +146,12 @@ export default function FormElementRenderer({
                   checked={!!field.value}
                   onCheckedChange={field.onChange}
                 />
-                <Label htmlFor={inputId}>{label}</Label>
+                <Label
+                  htmlFor={inputId}
+                  className="text-[var(--form-primary-color)]"
+                >
+                  {label}
+                </Label>
               </div>
             )}
           />
@@ -161,7 +166,12 @@ export default function FormElementRenderer({
                   id={`${inputId}-${index}`}
                   {...(register ? register(id) : {})}
                 />
-                <Label htmlFor={`${inputId}-${index}`}>{option}</Label>
+                <Label
+                  htmlFor={`${inputId}-${index}`}
+                  className="text-[var(--form-primary-color)]"
+                >
+                  {option}
+                </Label>
               </div>
             ))}
           </RadioGroup>
@@ -184,7 +194,7 @@ export default function FormElementRenderer({
   return (
     <div className="space-y-2">
       {type !== 'checkbox' && (
-        <Label htmlFor={inputId}>
+        <Label htmlFor={inputId} className="text-[var(--form-primary-color)]">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </Label>

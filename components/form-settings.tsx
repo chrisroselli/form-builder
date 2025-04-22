@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import type { FormEvent } from 'react';
+import { useEffect } from 'react';
 
 interface ConfirmationSettingsProps {
   confirmationData: {
@@ -17,6 +18,8 @@ interface ConfirmationSettingsProps {
     enableSMS: boolean;
     confirmationH1Text: string;
     confirmationPText: string;
+    primaryColor: string;
+    secondaryColor: string;
   };
   setConfirmationData: (data: any) => void;
 }
@@ -36,6 +39,18 @@ export default function ConfirmationSettings({
     }));
   };
 
+  useEffect(() => {
+    // Update CSS variables when colors change
+    document.documentElement.style.setProperty(
+      '--form-primary-color',
+      confirmationData.primaryColor || '#000000'
+    );
+    document.documentElement.style.setProperty(
+      '--form-secondary-color',
+      confirmationData.secondaryColor || '#000000'
+    );
+  }, [confirmationData.primaryColor, confirmationData.secondaryColor]);
+
   return (
     <>
       <Card>
@@ -43,6 +58,54 @@ export default function ConfirmationSettings({
           <CardTitle className="text-primary">Form Properties</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="primaryColor">Primary Color</Label>
+            <div className="flex gap-2">
+              <Input
+                id="primaryColor"
+                name="primaryColor"
+                type="color"
+                value={confirmationData.primaryColor || '#000000'}
+                onChange={handleChange}
+                className="h-10 w-10 p-1"
+              />
+              <Input
+                type="text"
+                value={confirmationData.primaryColor || '#000000'}
+                onChange={(e) => {
+                  setConfirmationData((prev: any) => ({
+                    ...prev,
+                    primaryColor: e.target.value,
+                  }));
+                }}
+                className="flex-1"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="secondaryColor">Secondary Color</Label>
+            <div className="flex gap-2">
+              <Input
+                id="secondaryColor"
+                name="secondaryColor"
+                type="color"
+                value={confirmationData.secondaryColor || '#000000'}
+                onChange={handleChange}
+                className="h-10 w-10 p-1"
+              />
+              <Input
+                type="text"
+                value={confirmationData.secondaryColor || '#000000'}
+                onChange={(e) => {
+                  setConfirmationData((prev: any) => ({
+                    ...prev,
+                    secondaryColor: e.target.value,
+                  }));
+                }}
+                className="flex-1"
+              />
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <Label htmlFor="enableSMS">Enable SMS Disclaimer</Label>

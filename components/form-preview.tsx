@@ -17,6 +17,8 @@ interface FormPreviewProps {
   submitButtonTitle?: string;
   enableSMS?: boolean;
   recaptchaSiteKey?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 export default function FormPreview({
@@ -24,6 +26,8 @@ export default function FormPreview({
   submitButtonTitle = 'Submit Form',
   enableSMS = false,
   recaptchaSiteKey,
+  primaryColor = '#000000',
+  secondaryColor = '#000000',
 }: FormPreviewProps) {
   // Load reCAPTCHA script
   useEffect(() => {
@@ -204,95 +208,113 @@ export default function FormPreview({
             </p>
           </div>
         ) : (
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {filteredRows.map((row) => (
-              <div key={row.id} className="flex flex-wrap -mx-2">
-                {row.elements.map((element) => {
-                  const columns = element.columns || 1;
-                  let widthClass = 'w-full px-2'; // Default full width
+          <div
+            style={
+              {
+                '--form-secondary-color': secondaryColor,
+              } as React.CSSProperties
+            }
+          >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {filteredRows.map((row) => (
+                <div key={row.id} className="flex flex-wrap -mx-2">
+                  {row.elements.map((element) => {
+                    const columns = element.columns || 1;
+                    let widthClass = 'w-full px-2'; // Default full width
 
-                  if (columns === 2) {
-                    widthClass = 'w-full md:w-1/2 px-2';
-                  } else if (columns === 3) {
-                    widthClass = 'w-full md:w-1/3 px-2';
-                  }
+                    if (columns === 2) {
+                      widthClass = 'w-full md:w-1/2 px-2';
+                    } else if (columns === 3) {
+                      widthClass = 'w-full md:w-1/3 px-2';
+                    }
 
-                  return (
-                    <div key={element.id} className={widthClass}>
-                      <FormElementRenderer
-                        element={element}
-                        preview={true}
-                        register={form.register}
-                        errors={form.formState.errors}
-                        control={form.control}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-
-            {recaptchaSiteKey && (
-              <div className="form-group">
-                <div
-                  className="g-recaptcha"
-                  data-sitekey={recaptchaSiteKey}
-                ></div>
-                <p className="italic text-sm">
-                  *ReCaptcha will validate on live site.
-                </p>
-              </div>
-            )}
-
-            {enableSMS && (
-              <div className="flex flex-col space-y-1">
-                <div className="flex items-center space-x-2">
-                  <Controller
-                    name="sms-disclaimer"
-                    control={form.control}
-                    render={({ field }) => (
-                      <Checkbox
-                        id="sms-disclaimer"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                  <Label htmlFor="sms-disclaimer" className="text-xs italic">
-                    By checking this box, you agree to receive text messages
-                    from [company] related to appointment setting, service
-                    informational, and marketing messages at the phone number
-                    provided above. You may reply STOP to opt-out at any time.
-                    Reply HELP for assistance. Messages and data rates may
-                    apply. Message frequency will vary. Learn more on our
-                    <a
-                      href="/privacy-policy.html"
-                      className="text-blue-500 hover:underline ml-1"
-                    >
-                      Privacy Policy
-                    </a>{' '}
-                    page and
-                    <a
-                      href="/terms-of-use.html"
-                      className="text-blue-500 hover:underline ml-1"
-                    >
-                      Terms & Conditions
-                    </a>
-                    .
-                  </Label>
+                    return (
+                      <div key={element.id} className={widthClass}>
+                        <FormElementRenderer
+                          element={element}
+                          preview={true}
+                          register={form.register}
+                          errors={form.formState.errors}
+                          control={form.control}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-                {form.formState.errors['sms-disclaimer'] && (
-                  <span className="text-red-500 text-xs ml-2">
-                    {form.formState.errors['sms-disclaimer'].message as string}
-                  </span>
-                )}
-              </div>
-            )}
+              ))}
 
-            <Button type="submit" className="w-full">
-              {submitButtonTitle || 'Submit'}
-            </Button>
-          </form>
+              {recaptchaSiteKey && (
+                <div className="form-group">
+                  <div
+                    className="g-recaptcha"
+                    data-sitekey={recaptchaSiteKey}
+                  ></div>
+                  <p className="italic text-sm">
+                    *ReCaptcha will validate on live site.
+                  </p>
+                </div>
+              )}
+
+              {enableSMS && (
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <Controller
+                      name="sms-disclaimer"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Checkbox
+                          id="sms-disclaimer"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Label htmlFor="sms-disclaimer" className="text-xs italic">
+                      By checking this box, you agree to receive text messages
+                      from [company] related to appointment setting, service
+                      informational, and marketing messages at the phone number
+                      provided above. You may reply STOP to opt-out at any time.
+                      Reply HELP for assistance. Messages and data rates may
+                      apply. Message frequency will vary. Learn more on our
+                      <a
+                        href="/privacy-policy.html"
+                        className="text-blue-500 hover:underline ml-1"
+                      >
+                        Privacy Policy
+                      </a>{' '}
+                      page and
+                      <a
+                        href="/terms-of-use.html"
+                        className="text-blue-500 hover:underline ml-1"
+                      >
+                        Terms & Conditions
+                      </a>
+                      .
+                    </Label>
+                  </div>
+                  {form.formState.errors['sms-disclaimer'] && (
+                    <span className="text-red-500 text-xs ml-2">
+                      {
+                        form.formState.errors['sms-disclaimer']
+                          .message as string
+                      }
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-secondary-color"
+                style={{
+                  backgroundColor: 'var(--form-secondary-color)',
+                  color: '#fff',
+                }}
+              >
+                {submitButtonTitle || 'Submit'}
+              </Button>
+            </form>
+          </div>
         )}
       </CardContent>
     </Card>

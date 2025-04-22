@@ -191,7 +191,13 @@ export default function FormExport({
   };
 
   const generateCss = () => {
+    const primaryColor = confirmationData.primaryColor || '#000000';
+    const secondaryColor = confirmationData.secondaryColor || '#000000';
     return `<style>
+:root {
+  --form-primary-color: ${primaryColor};
+  --form-secondary-color: ${secondaryColor};
+}
 .form-container {
   max-width: 800px;
   margin: 40px auto;
@@ -231,6 +237,7 @@ label {
   display: block;
   margin-bottom: 5px;
   font-weight: 500;
+  color: var(--form-primary-color);
 }
 
 input[type="text"],
@@ -284,6 +291,19 @@ textarea {
   font-size: 14px;
   margin-top: 5px;
 }
+.submit-button, button[type="submit"]  {
+  background-color: var(--form-secondary-color);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.submit-button:hover, button[type="submit"]:hover {
+  background-color: color-mix(in srgb, var(--form-secondary-color) 80%, transparent);
 </style>`;
   };
 

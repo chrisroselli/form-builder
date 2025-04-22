@@ -21,6 +21,8 @@ export interface ConfirmationData {
   enableSMS: boolean;
   confirmationH1Text: string;
   confirmationPText: string;
+  primaryColor: string;
+  secondaryColor: string;
 }
 
 export default function FormBuilder() {
@@ -38,6 +40,8 @@ export default function FormBuilder() {
     enableSMS: false,
     confirmationH1Text: '',
     confirmationPText: '',
+    primaryColor: '',
+    secondaryColor: '',
   });
 
   // Helper function to get all form elements from all rows
@@ -261,6 +265,8 @@ export default function FormBuilder() {
               submitButtonTitle={confirmationData.submitButtonTitle}
               enableSMS={confirmationData.enableSMS}
               recaptchaSiteKey={confirmationData.recaptchaSiteKey}
+              primaryColor={confirmationData.primaryColor}
+              secondaryColor={confirmationData.secondaryColor}
             />
           </TabsContent>
 
