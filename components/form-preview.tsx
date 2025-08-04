@@ -7,10 +7,9 @@ import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controller } from 'react-hook-form';
+import { useTreehouseValidator } from '@/hooks/use-treehouse-validator';
 
 interface FormPreviewProps {
   formRows: FormRow[];
@@ -29,6 +28,8 @@ export default function FormPreview({
   primaryColor = '#000000',
   secondaryColor = '#000000',
 }: FormPreviewProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+
   // Load reCAPTCHA script
   useEffect(() => {
     if (recaptchaSiteKey) {
@@ -52,129 +53,7 @@ export default function FormPreview({
 
   const allElements = filteredRows.flatMap((row) => row.elements);
 
-  // Create a Zod schema based on form elements
-  const createValidationSchema = () => {
-    const schemaFields: Record<string, any> = {};
-
-    allElements.forEach((element) => {
-      const { id, type, label, validation } = element;
-      let fieldSchema: z.ZodTypeAny;
-
-      if (type === 'checkbox') {
-        fieldSchema = z.boolean().refine((val) => val === true, {
-          message: `${label} is required`,
-        });
-      } else {
-        let baseSchema = z.string();
-
-        switch (type) {
-          case 'text':
-            if (validation?.type) {
-              switch (validation.type) {
-                case 'name':
-                  baseSchema = baseSchema
-                    .min(2, `${label} must be at least 2 characters`)
-                    .regex(/^[a-zA-Z\s-']+$/, 'Please enter a valid name');
-                  break;
-                case 'street':
-                  baseSchema = baseSchema
-                    .min(5, `${label} must be at least 5 characters`)
-                    .regex(
-                      /^[a-zA-Z0-9\s.,-]+$/,
-                      'Please enter a valid street address'
-                    );
-                  break;
-                case 'city':
-                  baseSchema = baseSchema
-                    .min(2, `${label} must be at least 2 characters`)
-                    .regex(/^[a-zA-Z\s-']+$/, 'Please enter a valid city name');
-                  break;
-                case 'zip':
-                  baseSchema = baseSchema
-                    .max(5, `${label} must be exactly 5 digits`)
-                    .regex(
-                      /^\d{5}$/,
-                      'Please enter a valid 5-digit ZIP code (numbers only)'
-                    );
-                  break;
-                case 'custom':
-                  if (validation.minLength) {
-                    baseSchema = baseSchema.min(
-                      validation.minLength,
-                      `${label} must be at least ${validation.minLength} characters`
-                    );
-                  }
-                  if (validation.maxLength) {
-                    baseSchema = baseSchema.max(
-                      validation.maxLength,
-                      `${label} must be at most ${validation.maxLength} characters`
-                    );
-                  }
-                  if (validation.pattern) {
-                    try {
-                      const regex = new RegExp(validation.pattern);
-                      baseSchema = baseSchema.regex(
-                        regex,
-                        validation.patternMessage || 'Invalid format'
-                      );
-                    } catch (e) {
-                      console.error('Invalid regex pattern:', e);
-                    }
-                  }
-                  break;
-              }
-            } else {
-              baseSchema = baseSchema.min(
-                2,
-                `${label} must be at least 2 characters`
-              );
-            }
-            break;
-          case 'email':
-            baseSchema = baseSchema.email('Please enter a valid email address');
-            break;
-          case 'tel':
-            baseSchema = baseSchema.regex(
-              /^\d{10}$/,
-              'Phone number must be 10 digits'
-            );
-            break;
-          case 'select':
-            baseSchema = baseSchema.min(1, {
-              message: `Please select a ${label}`,
-            });
-            break;
-        }
-
-        // Set required to true if there's any validation
-        if (validation || type === 'email' || type === 'tel') {
-          element.required = true;
-          baseSchema = baseSchema.min(1, `${label} is required`);
-        }
-
-        fieldSchema = baseSchema;
-      }
-
-      schemaFields[id] = fieldSchema;
-    });
-
-    // Add sms-disclaimer to schema if enableSMS is true
-    if (enableSMS) {
-      schemaFields['sms-disclaimer'] = z
-        .boolean()
-        .refine((val) => val === true, {
-          message: 'SMS message consent is required',
-        });
-    }
-
-    return z.object(schemaFields);
-  };
-
-  const formSchema = createValidationSchema();
-  type FormValues = z.infer<typeof formSchema>;
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm({
     defaultValues: allElements.reduce(
       (acc, element) => {
         if (element.type === 'checkbox') {
@@ -184,16 +63,91 @@ export default function FormPreview({
         }
         return acc;
       },
-      enableSMS
-        ? ({ 'sms-disclaimer': false } as FormValues)
-        : ({} as FormValues)
+      enableSMS ? ({ 'sms-disclaimer': false } as any) : ({} as any)
     ),
   });
 
-  function onSubmit(data: FormValues) {
+  // Initialize Treehouse Form Validator
+  const { validateAll } = useTreehouseValidator('form-preview', form, {
+    disableSubmit: true,
+    validateOnBlur: true,
+    errorMessageClass: 'text-red-500 text-xs mt-1',
+    errorMessageTag: 'span',
+    errorInputClass: 'border-red-500',
+    customValidators: {
+      name: (field) => {
+        const value = field.value.trim();
+        if (!value)
+          return `${field.getAttribute('data-label') || 'Name'} is required`;
+        if (value.length < 2)
+          return `${
+            field.getAttribute('data-label') || 'Name'
+          } must be at least 2 characters`;
+        if (!/^[a-zA-Z\s-']+$/.test(value)) return 'Please enter a valid name';
+      },
+      street: (field) => {
+        const value = field.value.trim();
+        if (!value)
+          return `${field.getAttribute('data-label') || 'Street'} is required`;
+        if (value.length < 5)
+          return `${
+            field.getAttribute('data-label') || 'Street'
+          } must be at least 5 characters`;
+        if (!/^[a-zA-Z0-9\s.,-]+$/.test(value))
+          return 'Please enter a valid street address';
+      },
+      city: (field) => {
+        const value = field.value.trim();
+        if (!value)
+          return `${field.getAttribute('data-label') || 'City'} is required`;
+        if (value.length < 2)
+          return `${
+            field.getAttribute('data-label') || 'City'
+          } must be at least 2 characters`;
+        if (!/^[a-zA-Z\s-']+$/.test(value))
+          return 'Please enter a valid city name';
+      },
+      zip: (field) => {
+        const value = field.value.trim();
+        if (!value)
+          return `${field.getAttribute('data-label') || 'ZIP'} is required`;
+        if (!/^\d{5}$/.test(value))
+          return 'Please enter a valid 5-digit ZIP code (numbers only)';
+      },
+      email: (field) => {
+        const value = field.value.trim();
+        if (!value) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value))
+          return 'Please enter a valid email address';
+      },
+      phone: (field) => {
+        const value = field.value.replace(/\D/g, '');
+        if (!value) return 'Phone number is required';
+        if (value.length !== 10) return 'Phone number must be 10 digits';
+      },
+    },
+  });
+
+  function onSubmit(data: any) {
     console.log('Form submitted:', data);
     // Here you can add your form submission logic
   }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const errorFields = validateAll();
+    if (errorFields.length > 0) {
+      // Focus on first error field
+      errorFields[0].focus();
+      errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // If no errors, submit the form
+    form.handleSubmit(onSubmit)();
+  };
 
   return (
     <Card>
@@ -215,7 +169,12 @@ export default function FormPreview({
               } as React.CSSProperties
             }
           >
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              ref={formRef}
+              id="form-preview"
+              onSubmit={handleFormSubmit}
+              className="space-y-6"
+            >
               {filteredRows.map((row) => (
                 <div key={row.id} className="flex flex-wrap -mx-2">
                   {row.elements.map((element) => {

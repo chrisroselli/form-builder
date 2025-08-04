@@ -27,6 +27,55 @@ export default function FormExport({
     elements: row.elements.filter((el) => !el.isPlaceholder),
   }));
 
+  // Helper function to generate Treehouse Form Validator data attributes
+  const getValidationAttributes = (element: any) => {
+    const attrs: string[] = [];
+
+    if (element.required) {
+      attrs.push('data-validate-required');
+    }
+
+    if (element.validation?.type) {
+      switch (element.validation.type) {
+        case 'name':
+          attrs.push('data-validate-name');
+          attrs.push(`data-label="${element.label}"`);
+          break;
+        case 'street':
+          attrs.push('data-validate-street');
+          attrs.push(`data-label="${element.label}"`);
+          break;
+        case 'city':
+          attrs.push('data-validate-city');
+          attrs.push(`data-label="${element.label}"`);
+          break;
+        case 'zip':
+          attrs.push('data-validate-zip="us"');
+          attrs.push(`data-label="${element.label}"`);
+          break;
+        case 'custom':
+          if (element.validation.pattern) {
+            attrs.push(`pattern="${element.validation.pattern}"`);
+            attrs.push(
+              `title="${element.validation.patternMessage || 'Invalid format'}"`
+            );
+          }
+          break;
+      }
+    } else {
+      switch (element.type) {
+        case 'email':
+          attrs.push('data-validate-email');
+          break;
+        case 'tel':
+          attrs.push('data-validate-phone="us"');
+          break;
+      }
+    }
+
+    return attrs.join(' ');
+  };
+
   const generateHtml = () => {
     if (
       filteredRows.length === 0 ||
@@ -73,32 +122,40 @@ export default function FormExport({
               element.validation?.type === 'zip'
                 ? `inputmode="numeric" maxLength="5"`
                 : ''
-            }><div id="${inputName}Error" class="error-message"></div>`;
+            } ${getValidationAttributes(
+              element
+            )}><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'tel':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
             }
-            inputmode="numeric" maxLength="10"><div id="${inputName}Error" class="error-message"></div>`;
+            inputmode="numeric" maxLength="10" ${getValidationAttributes(
+              element
+            )}><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'date':
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            }><div id="${inputName}Error" class="error-message"></div>`;
+            } ${getValidationAttributes(
+              element
+            )}><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'textarea':
             html += `
           <textarea id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            } rows="${
-              rows || 3
-            }"></textarea><div id="${inputName}Error" class="error-message"></div>`;
+            } rows="${rows || 3}" ${getValidationAttributes(
+              element
+            )}></textarea><div id="${inputName}Error" class="error-message"></div>`;
             break;
           case 'select':
             html += `
-          <select id="${inputId}" name="${inputName}">
+          <select id="${inputId}" name="${inputName}" ${getValidationAttributes(
+              element
+            )}>
             <option value="" disabled selected>${
               placeholder || 'Select an option'
             }</option>`;
@@ -112,7 +169,9 @@ export default function FormExport({
           case 'checkbox':
             html += `
           <div class="checkbox-wrapper">
-            <input type="checkbox" id="${inputId}" name="${inputName}">
+            <input type="checkbox" id="${inputId}" name="${inputName}" ${getValidationAttributes(
+              element
+            )}>
             ${label ? `<label for="${inputId}">${label}</label>` : ''}
             <div id="${inputName}Error" class="error-message"></div>
           </div>`;
@@ -123,7 +182,9 @@ export default function FormExport({
             options?.forEach((option, index) => {
               html += `
             <div class="radio-wrapper">
-              <input type="radio" id="${inputId}-${index}" name="${inputId}" value="${option}">
+              <input type="radio" id="${inputId}-${index}" name="${inputId}" value="${option}" ${getValidationAttributes(
+                element
+              )}>
               ${
                 label
                   ? `<label for="${inputId}-${index}">${option}</label>`
@@ -137,14 +198,18 @@ export default function FormExport({
             break;
           case 'file':
             html += `
-          <input type="file" id="${inputId}" name="${inputName}">
+          <input type="file" id="${inputId}" name="${inputName}" ${getValidationAttributes(
+              element
+            )}>
           <div id="${inputName}Error" class="error-message"></div>`;
             break;
           default:
             html += `
           <input type="${type}" id="${inputId}" name="${inputName}" ${
               placeholder ? `placeholder="${placeholder}"` : ''
-            }><div id="${inputName}Error" class="error-message"></div>`;
+            } ${getValidationAttributes(
+              element
+            )}><div id="${inputName}Error" class="error-message"></div>`;
         }
 
         html += `
@@ -191,41 +256,47 @@ export default function FormExport({
   };
 
   const generateCss = () => {
-    const primaryColor = confirmationData.primaryColor || '#000000';
-    const secondaryColor = confirmationData.secondaryColor || '#000000';
+    const primaryColor = confirmationData.primaryColor;
+    const secondaryColor = confirmationData.secondaryColor;
+
     return `<style>
 :root {
   --form-primary-color: ${primaryColor};
   --form-secondary-color: ${secondaryColor};
 }
+
 .form-container {
   max-width: 800px;
-  margin: 40px auto;
+  margin: 0 auto;
   padding: 20px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
 .form-row {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -10px;
-  margin-bottom: 20px;
 }
 
-.form-col-1, .form-col-2, .form-col-3 {
+.form-col-1 {
+  flex: 0 0 100%;
   padding: 0 10px;
-  width: 100%;
 }
 
-@media (min-width: 768px) {
-  .form-col-2 {
-    width: 50%;
-  }
+.form-col-2 {
+  flex: 0 0 50%;
+  padding: 0 10px;
+}
 
+.form-col-3 {
+  flex: 0 0 33.333%;
+  padding: 0 10px;
+}
+
+@media (max-width: 768px) {
+  .form-col-2,
   .form-col-3 {
-    width: 33.333%;
+    flex: 0 0 100%;
   }
 }
 
@@ -233,77 +304,120 @@ export default function FormExport({
   margin-bottom: 20px;
 }
 
-label {
+.form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--form-primary-color);
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-textarea,
-select {
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 2px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
-  transition: all 0.2s ease;
+  transition: border-color 0.3s ease;
 }
 
-input[type="text"].is-invalid,
-input[type="email"].is-invalid,
-input[type="tel"].is-invalid,
-input[type="date"].is-invalid,
-textarea.is-invalid,
-select.is-invalid {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--form-secondary-color);
 }
 
-textarea {
-  resize: vertical;
+.form-group input.error-input,
+.form-group select.error-input,
+.form-group textarea.error-input {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.form-group input.is-valid,
+.form-group select.is-valid,
+.form-group textarea.is-valid {
+  border-color: #28a745;
+  background-color: #f8fff9;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+
+.required {
+  color: #dc3545;
 }
 
 .checkbox-wrapper,
-.radio-wrapper {
+.radio-group {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.checkbox-wrapper input[type="checkbox"],
+.radio-wrapper input[type="radio"] {
+  width: auto;
+  margin-right: 8px;
+}
+
 .radio-group {
-  display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
 }
 
-.required {
-  color: #e53e3e;
-  margin-left: 2px;
+.radio-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-.error-message {
-  color: #ef4444;
-  font-size: 14px;
-  margin-top: 5px;
-}
-.submit-button, button[type="submit"]  {
+.submit-button, button[type="submit"] {
+  width: 100%;
+  padding: 15px;
   background-color: var(--form-secondary-color);
-  color: #fff;
+  color: white;
   border: none;
-  padding: 12px 24px;
   border-radius: 4px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .submit-button:hover, button[type="submit"]:hover {
   background-color: color-mix(in srgb, var(--form-secondary-color) 80%, transparent);
+}
+
+/* Error state styles */
+.error-input {
+  border-color: #dc3545 !important;
+  background-color: #fff5f5 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Success state styles */
+.is-valid {
+  border-color: #28a745 !important;
+  background-color: #f8fff9 !important;
+}
+
+/* Invalid state styles */
+.is-invalid {
+  border-color: #dc3545 !important;
+  background-color: #fff5f5 !important;
 }
 </style>`;
   };
@@ -316,11 +430,135 @@ textarea {
       return '';
 
     let js = `<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script type="module">
-import { z } from 'https://cdn.jsdelivr.net/npm/zod@3.22.4/+esm';
-
+<script src="https://cdn.treehouseinternetgroup.com/cms_core/assets/js/th_form_validator.js"></script>
+<script>
 const form = document.getElementById('custom-form');
-const errorElements = {};`;
+const errorElements = {};
+
+// Fallback validator class when Treehouse script fails to load
+class FallbackValidator {
+  constructor(formId, options = {}) {
+    this.form = document.getElementById(formId);
+    this.options = options;
+    this.customValidators = options.customValidators || {};
+  }
+
+  validateField(field) {
+    const value = field.value.trim();
+    const fieldName = field.name;
+    const dataValidate = field.getAttribute('data-validate-name') || 
+                        field.getAttribute('data-validate-email') || 
+                        field.getAttribute('data-validate-phone') ||
+                        field.getAttribute('data-validate-zip') ||
+                        field.getAttribute('data-validate-street') ||
+                        field.getAttribute('data-validate-city');
+
+    // Check required
+    if (field.hasAttribute('data-validate-required') && !value) {
+      return field.getAttribute('data-label') + ' is required';
+    }
+
+    // Check custom validators
+    if (dataValidate && this.customValidators[dataValidate]) {
+      const error = this.customValidators[dataValidate](field);
+      if (error) return error;
+    }
+
+    // Built-in validators
+    if (field.hasAttribute('data-validate-email')) {
+      if (value && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value)) {
+        return 'Please enter a valid email address';
+      }
+    }
+
+    if (field.hasAttribute('data-validate-phone')) {
+      const phoneDigits = value.replace(/\\D/g, '');
+      if (value && phoneDigits.length !== 10) {
+        return 'Phone number must be 10 digits';
+      }
+    }
+
+    if (field.hasAttribute('data-validate-zip')) {
+      if (value && !/^\\d{5}$/.test(value)) {
+        return 'Please enter a valid 5-digit ZIP code';
+      }
+    }
+
+    if (field.hasAttribute('data-validate-name')) {
+      if (value && value.length < 2) {
+        return (field.getAttribute('data-label') || 'Name') + ' must be at least 2 characters';
+      }
+      if (value && !/^[a-zA-Z\\s-']+$/.test(value)) {
+        return 'Please enter a valid name';
+      }
+    }
+
+    if (field.hasAttribute('data-validate-street')) {
+      if (value && value.length < 5) {
+        return (field.getAttribute('data-label') || 'Street') + ' must be at least 5 characters';
+      }
+      if (value && !/^[a-zA-Z0-9\\s.,-]+$/.test(value)) {
+        return 'Please enter a valid street address';
+      }
+    }
+
+    if (field.hasAttribute('data-validate-city')) {
+      if (value && value.length < 2) {
+        return (field.getAttribute('data-label') || 'City') + ' must be at least 2 characters';
+      }
+      if (value && !/^[a-zA-Z\\s-']+$/.test(value)) {
+        return 'Please enter a valid city name';
+      }
+    }
+
+    return null;
+  }
+
+  validateAll() {
+    const errorFields = [];
+    const fields = this.form.querySelectorAll('input, select, textarea');
+
+    fields.forEach(field => {
+      const error = this.validateField(field);
+      if (error) {
+        this.showError(field, error);
+        errorFields.push(field);
+      } else {
+        this.removeError(field);
+      }
+    });
+
+    return errorFields;
+  }
+
+  showError(field, error) {
+    field.classList.add(this.options.errorInputClass || 'error-input');
+    
+    // Remove existing error message
+    const existingError = field.parentElement.querySelector('.' + (this.options.errorMessageClass || 'error-message'));
+    if (existingError) {
+      existingError.remove();
+    }
+
+    // Create new error message
+    const errorElement = document.createElement(this.options.errorMessageTag || 'span');
+    errorElement.className = this.options.errorMessageClass || 'error-message';
+    errorElement.textContent = error;
+    
+    // Insert after the field
+    field.parentElement.insertBefore(errorElement, field.nextSibling);
+  }
+
+  removeError(field) {
+    field.classList.remove(this.options.errorInputClass || 'error-input');
+    
+    // Remove error message
+    const errorElement = field.parentElement.querySelector('.' + (this.options.errorMessageClass || 'error-message'));
+    if (errorElement) {
+      errorElement.remove();
+    }
+  }
+}`;
 
     // Generate error element references
     filteredRows.forEach((row) => {
@@ -345,119 +583,92 @@ errorElements['g-recaptcha-response'] = document.getElementById('recaptchaError'
 
     js += `
 
-// Define the schema
-const formSchema = z.object({`;
-
-    // Generate schema fields
-    filteredRows.forEach((row) => {
-      if (row.elements.length === 0) return;
-
-      row.elements.forEach((element) => {
-        const { type, label, required } = element;
-        const inputName = `form_logger_${label.replace(/ /g, '_')}`;
-
-        switch (type) {
-          case 'text':
-            if (element.validation?.type) {
-              switch (element.validation.type) {
-                case 'name':
-                  js += `
-  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
-    .min(2, '${label} must be at least 2 characters')
-    .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid name'),`;
-                  break;
-                case 'street':
-                  js += `
-  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
-    .min(5, '${label} must be at least 5 characters')
-    .regex(/^[a-zA-Z0-9\\s.,-]+$/, 'Please enter a valid street address'),`;
-                  break;
-                case 'city':
-                  js += `
-  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
-    .min(2, '${label} must be at least 2 characters')
-    .regex(/^[a-zA-Z\\s-']+$/, 'Please enter a valid city name'),`;
-                  break;
-                case 'zip':
-                  js += `
-  '${inputName}': z.string()${required ? `.min(1, '${label} is required')` : ''}
-    .regex(/^\\d{5}$/, 'Please enter a valid 5-digit ZIP code (numbers only)'),`;
-                  break;
-                case 'custom':
-                  js += `
-  '${inputName}': z.string()${
-                    required ? `.min(1, '${label} is required')` : ''
-                  }`;
-                  if (element.validation.minLength) {
-                    js += `
-    .min(${element.validation.minLength}, '${label} must be at least ${element.validation.minLength} characters')`;
-                  }
-                  if (element.validation.maxLength) {
-                    js += `
-    .max(${element.validation.maxLength}, '${label} must be at most ${element.validation.maxLength} characters')`;
-                  }
-                  if (element.validation.pattern) {
-                    js += `
-    .regex(/${element.validation.pattern}/, '${
-                      element.validation.patternMessage || 'Invalid format'
-                    }')`;
-                  }
-                  js += ',';
-                  break;
-              }
-            } else {
-              js += `
-  '${inputName}': z.string()${
-                required ? `.min(1, '${label} is required')` : ''
-              }.min(2, '${label} must be at least 2 characters'),`;
+// Initialize validator (Treehouse or fallback)
+let validator;
+try {
+    if (typeof ThFormValidator === 'function') {
+        validator = new ThFormValidator('custom-form', {
+            disableSubmit: true,
+            validateOnBlur: true,
+            errorMessageClass: 'error-message',
+            errorMessageTag: 'span',
+            errorInputClass: 'error-input',
+            customValidators: {
+                name: function(field) {
+                    const value = field.value.trim();
+                    if (!value) return field.getAttribute('data-label') + ' is required';
+                    if (value.length < 2) return field.getAttribute('data-label') + ' must be at least 2 characters';
+                    if (!/^[a-zA-Z\\s-']+$/.test(value)) return 'Please enter a valid name';
+                },
+                street: function(field) {
+                    const value = field.value.trim();
+                    if (!value) return field.getAttribute('data-label') + ' is required';
+                    if (value.length < 5) return field.getAttribute('data-label') + ' must be at least 5 characters';
+                    if (!/^[a-zA-Z0-9\\s.,-]+$/.test(value)) return 'Please enter a valid street address';
+                },
+                city: function(field) {
+                    const value = field.value.trim();
+                    if (!value) return field.getAttribute('data-label') + ' is required';
+                    if (value.length < 2) return field.getAttribute('data-label') + ' must be at least 2 characters';
+                    if (!/^[a-zA-Z\\s-']+$/.test(value)) return 'Please enter a valid city name';
+                },
+                email: function(field) {
+                    const value = field.value.trim();
+                    if (!value) return 'Email is required';
+                    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+                    if (!emailRegex.test(value)) return 'Please enter a valid email address';
+                },
+                phone: function(field) {
+                    const value = field.value.replace(/\\D/g, '');
+                    if (!value) return 'Phone number is required';
+                    if (value.length !== 10) return 'Phone number must be 10 digits';
+                }
             }
-            break;
-          case 'email':
-            js += `
-  '${inputName}': z.string()${
-              required ? `.min(1, 'Email is required')` : ''
-            }.email('Please enter a valid email address'),`;
-            break;
-          case 'tel':
-            js += `
-  '${inputName}': z.string()${
-              required ? `.min(1, 'Phone number is required')` : ''
-            }.regex(/^\\d{10}$/, 'Phone number must be 10 digits'),`;
-            break;
-          case 'checkbox':
-            js += `
-  '${inputName}': z.boolean()${
-              required
-                ? `.refine(val => val === true, { message: '${label} is required' })`
-                : ''
-            },`;
-            break;
-          case 'select':
-            js += `
-  '${inputName}': z.string()${
-              required ? `.min(1, 'Please select a ${label}')` : ''
-            },`;
-            break;
-          default:
-            js += `
-  '${inputName}': z.string()${
-              required ? `.min(1, '${label} is required')` : ''
-            },`;
-        }
-      });
-    });
-    // Add schema field for sms_disclaimer if enabled
-    if (confirmationData.enableSMS) {
-      js += `
-  'sms_disclaimer': z.boolean().refine(val => val === true, { message: 'SMS message consent is required' }),`;
+        });
+    } else {
+        throw new Error('ThFormValidator not available');
     }
-
-    // Add schema field for reCAPTCHA
-    js += `
-  'g-recaptcha-response': z.string().min(1, 'Please complete the reCAPTCHA verification'),`;
-
-    js += `
-});
+} catch (error) {
+    console.warn('Using fallback validator:', error);
+    validator = new FallbackValidator('custom-form', {
+        disableSubmit: true,
+        validateOnBlur: true,
+        errorMessageClass: 'error-message',
+        errorMessageTag: 'span',
+        errorInputClass: 'error-input',
+        customValidators: {
+            name: function(field) {
+                const value = field.value.trim();
+                if (!value) return field.getAttribute('data-label') + ' is required';
+                if (value.length < 2) return field.getAttribute('data-label') + ' must be at least 2 characters';
+                if (!/^[a-zA-Z\\s-']+$/.test(value)) return 'Please enter a valid name';
+            },
+            street: function(field) {
+                const value = field.value.trim();
+                if (!value) return field.getAttribute('data-label') + ' is required';
+                if (value.length < 5) return field.getAttribute('data-label') + ' must be at least 5 characters';
+                if (!/^[a-zA-Z0-9\\s.,-]+$/.test(value)) return 'Please enter a valid street address';
+            },
+            city: function(field) {
+                const value = field.value.trim();
+                if (!value) return field.getAttribute('data-label') + ' is required';
+                if (value.length < 2) return field.getAttribute('data-label') + ' must be at least 2 characters';
+                if (!/^[a-zA-Z\\s-']+$/.test(value)) return 'Please enter a valid city name';
+            },
+            email: function(field) {
+                const value = field.value.trim();
+                if (!value) return 'Email is required';
+                const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+                if (!emailRegex.test(value)) return 'Please enter a valid email address';
+            },
+            phone: function(field) {
+                const value = field.value.replace(/\\D/g, '');
+                if (!value) return 'Phone number is required';
+                if (value.length !== 10) return 'Phone number must be 10 digits';
+            }
+        }
+    });
+}
 
 // Add callback for reCAPTCHA
 window.onRecaptchaSuccess = function() {
@@ -478,77 +689,57 @@ function clearErrors() {
     });
 }
 
-function validateField(field) {
-    const fieldName = field.name;
-    let fieldValue = field.value;
-    if (fieldName === 'sms_disclaimer') {
-        fieldValue = field.checked === true;
-    }
-    const fieldSchema = formSchema.shape[fieldName];
-    
-    if (!fieldSchema) return;
-    
-    const result = fieldSchema.safeParse(fieldValue);
-    const errorElement = document.getElementById(fieldName + 'Error');
-    
-    if (result.success) {
-        field.classList.remove('is-invalid');
-        field.classList.add('is-valid');
-        if (errorElement) errorElement.textContent = '';
-    } else {
-        field.classList.remove('is-valid');
-        field.classList.add('is-invalid');
-        if (errorElement) errorElement.textContent = result.error.errors[0].message;
-    }
-}
-
-function displayErrors(errors) {
-    clearErrors();
-    errors.forEach(error => {
-        const field = error.path[0];
-        const inputField = document.querySelector(\`[name="\${field}"]\`);
-        if (inputField) {
-            inputField.classList.add('is-invalid');
-        }
-        if (errorElements[field]) {
-            errorElements[field].textContent = error.message;
-        }
-    });
-}
-
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const formData = new FormData(form);
-    const formValues = Object.fromEntries(formData.entries());
-    // Convert sms_disclaimer to boolean (true if checked, false if not)
-    formValues.sms_disclaimer = formValues.sms_disclaimer === 'on' ? true : false;
-    
     // Get reCAPTCHA response
-    formValues['g-recaptcha-response'] = grecaptcha.getResponse();
+    const recaptchaResponse = grecaptcha.getResponse();
     
-    const result = formSchema.safeParse(formValues);
-    
-    if (result.success) {
-        clearErrors();
-        // Add success state to all fields
-        document.querySelectorAll('input, select, textarea').forEach(field => {
-            field.classList.add('is-valid');
-        });
-        form.submit();
-    } else {
-        displayErrors(result.error.errors);
+    // Validate reCAPTCHA
+    if (!recaptchaResponse) {
+        const recaptchaError = document.getElementById('recaptchaError');
+        if (recaptchaError) {
+            recaptchaError.textContent = 'Please complete the reCAPTCHA verification';
+        }
+        return;
     }
+    
+    // Validate form using validator
+    const errorFields = validator.validateAll();
+    if (errorFields.length > 0) {
+        // Focus on first error field
+        errorFields[0].focus();
+        errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    // If no errors, submit the form
+    clearErrors();
+    // Add success state to all fields
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.classList.add('is-valid');
+    });
+    form.submit();
 });
 
 // Add input event listeners to validate fields in real-time
 document.querySelectorAll('input, select, textarea').forEach(field => {
     field.addEventListener('input', () => {
-        validateField(field);
+        const error = validator.validateField(field);
+        if (error) {
+            validator.showError(field, error);
+        } else {
+            validator.removeError(field);
+        }
     });
     
     field.addEventListener('blur', () => {
-        validateField(field);
+        const error = validator.validateField(field);
+        if (error) {
+            validator.showError(field, error);
+        } else {
+            validator.removeError(field);
+        }
     });
 });
 </script>`;

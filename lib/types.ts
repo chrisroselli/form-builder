@@ -1,12 +1,12 @@
 export type FormElementType =
   | 'text'
-  | 'textarea'
-  | 'select'
-  | 'checkbox'
-  | 'radio'
-  | 'date'
   | 'email'
   | 'tel'
+  | 'select'
+  | 'checkbox'
+  | 'textarea'
+  | 'radio'
+  | 'date'
   | 'file'
   | 'placeholder';
 
@@ -31,14 +31,18 @@ export interface FormElement {
     pattern?: string;
     patternMessage?: string;
   };
-  zodValidation?: {
-    enabled: boolean;
-    schema?: string;
-  };
 }
 
 export interface FormRow {
   id: string;
   elements: FormElement[];
-  columnCount?: ColumnCount; // Store the column count for the row
+}
+
+export interface ConfirmationData {
+  title: string;
+  message: string;
+  primaryColor: string;
+  secondaryColor: string;
+  enableSMS: boolean;
+  recaptchaSiteKey?: string;
 }

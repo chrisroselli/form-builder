@@ -38,7 +38,8 @@ export default function FormElementRenderer({
   errors,
   control,
 }: FormElementRendererProps) {
-  const { id, type, label, placeholder, required, options, rows } = element;
+  const { id, type, label, placeholder, required, options, rows, validation } =
+    element;
   const inputId = `form-element-${id}`;
   const error = errors?.[id];
 
@@ -46,6 +47,55 @@ export default function FormElementRenderer({
   if (type === 'placeholder') {
     return null;
   }
+
+  // Generate Treehouse Form Validator data attributes
+  const getValidationAttributes = () => {
+    const attrs: Record<string, string> = {};
+
+    if (required) {
+      attrs['data-validate-required'] = '';
+    }
+
+    if (validation?.type) {
+      switch (validation.type) {
+        case 'name':
+          attrs['data-validate-name'] = '';
+          attrs['data-label'] = label;
+          break;
+        case 'street':
+          attrs['data-validate-street'] = '';
+          attrs['data-label'] = label;
+          break;
+        case 'city':
+          attrs['data-validate-city'] = '';
+          attrs['data-label'] = label;
+          break;
+        case 'zip':
+          attrs['data-validate-zip'] = 'us';
+          attrs['data-label'] = label;
+          break;
+        case 'custom':
+          if (validation.pattern) {
+            attrs['pattern'] = validation.pattern;
+            attrs['title'] = validation.patternMessage || 'Invalid format';
+          }
+          break;
+      }
+    } else {
+      switch (type) {
+        case 'email':
+          attrs['data-validate-email'] = '';
+          break;
+        case 'tel':
+          attrs['data-validate-phone'] = 'us';
+          break;
+      }
+    }
+
+    return attrs;
+  };
+
+  const validationAttrs = getValidationAttributes();
 
   const renderFormElement = () => {
     switch (type) {
@@ -61,6 +111,7 @@ export default function FormElementRenderer({
             disabled={!preview}
             maxLength={isZip ? 5 : undefined}
             inputMode={isZip ? 'numeric' : undefined}
+            {...validationAttrs}
             {...(register ? register(id) : {})}
           />
         );
@@ -74,6 +125,7 @@ export default function FormElementRenderer({
             placeholder={placeholder}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
+            {...validationAttrs}
             {...(register ? register(id) : {})}
           />
         );
@@ -83,6 +135,7 @@ export default function FormElementRenderer({
         return (
           <Input
             id={inputId}
+            name={id}
             type={type}
             placeholder={placeholder}
             className={`w-full ${error ? 'border-red-500' : ''}`}
@@ -91,6 +144,7 @@ export default function FormElementRenderer({
             onChange={originalOnChange}
             inputMode="numeric"
             maxLength={10}
+            {...validationAttrs}
           />
         );
       }
@@ -102,6 +156,7 @@ export default function FormElementRenderer({
             rows={rows || 3}
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
+            {...validationAttrs}
             {...(register ? register(id) : {})}
           />
         );
@@ -145,6 +200,7 @@ export default function FormElementRenderer({
                   disabled={!preview}
                   checked={!!field.value}
                   onCheckedChange={field.onChange}
+                  {...validationAttrs}
                 />
                 <Label
                   htmlFor={inputId}
@@ -165,6 +221,7 @@ export default function FormElementRenderer({
                   value={option}
                   id={`${inputId}-${index}`}
                   {...(register ? register(id) : {})}
+                  {...validationAttrs}
                 />
                 <Label
                   htmlFor={`${inputId}-${index}`}
@@ -183,6 +240,7 @@ export default function FormElementRenderer({
             type="file"
             className={`w-full ${error ? 'border-red-500' : ''}`}
             disabled={!preview}
+            {...validationAttrs}
             {...(register ? register(id) : {})}
           />
         );
