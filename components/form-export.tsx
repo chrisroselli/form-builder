@@ -304,6 +304,7 @@ textarea {
 }
 .submit-button:hover, button[type="submit"]:hover {
   background-color: color-mix(in srgb, var(--form-secondary-color) 80%, transparent);
+}
 </style>`;
   };
 
