@@ -304,6 +304,7 @@ textarea {
 }
 .submit-button:hover, button[type="submit"]:hover {
   background-color: color-mix(in srgb, var(--form-secondary-color) 80%, transparent);
+}
 </style>`;
   };
 
@@ -557,7 +558,6 @@ document.querySelectorAll('input, select, textarea').forEach(field => {
 
   const generateConfirmationCode = () => {
     return `<?php
-$output = '<style>form{display:none;}</style>';
 if(!empty($_POST)) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
@@ -607,7 +607,6 @@ if(!empty($_POST)) {
     // Missing POST data
 	$output .= '<h1>Looks like you forgot to fill out a form field.</h1><p>Please fill out the form completely.</p>';
 }
-echo $output;
 ?>`;
   };
 
